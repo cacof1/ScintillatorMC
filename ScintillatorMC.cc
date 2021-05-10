@@ -30,7 +30,7 @@
 #include <fstream>
 using namespace std;
 void calcRSP(PrimaryGeneratorAction *);
-void calcStoppingPower(PrimaryGeneratorAction *);
+void calcStoppingPower(PrimaryGeneratorAction *, DetectorConstruction*);
 int main(int argc,char** argv) {
   gROOT->ProcessLine("#include <vector>");
 
@@ -47,9 +47,7 @@ int main(int argc,char** argv) {
   G4int   thread  = atoi(argv[6]); 
   G4int  ANumber  = atoi(argv[7]); //Atomic Number
   G4String CT     = "";
-
   if(argc==9) CT     = argv[8];
-
   CLHEP::RanecuEngine *theRanGenerator = new CLHEP::RanecuEngine;  
   theRanGenerator->setSeed(thread);
   CLHEP::HepRandom::setTheEngine(theRanGenerator);
@@ -57,9 +55,11 @@ int main(int argc,char** argv) {
   G4RunManager* runManager   = new G4RunManager;  
   runManager->SetUserInitialization(new PhysicsList(paraWorldName));
   DetectorConstruction* myDC = new DetectorConstruction(Model,angle,thick,CT);
+  cout<<Energy<<" "<<ANumber<<" "<<nProtons<<endl;
   PrimaryGeneratorAction *theGenerator =  new PrimaryGeneratorAction(Energy,ANumber, nProtons);
+  cout<<__LINE__<<endl;
   Analysis* theAnalysis      = new Analysis(thread,angle,Model);
-
+  cout<<__LINE__<<endl;
   //G4ExceptionHandler* handler = new G4ExceptionHandler();
   runManager->SetUserAction(theGenerator);
   runManager->SetUserAction( new SteppingAction() );
@@ -93,7 +93,7 @@ int main(int argc,char** argv) {
   runManager->BeamOn( nProtons );  
   theAnalysis->Save();
   calcRSP(theGenerator);
-  //calcStoppingPower(theGenerator);
+  calcStoppingPower(theGenerator, myDC);
   //delete visManager;
   return 0;
   delete runManager;
@@ -127,13 +127,16 @@ void calcRSP(PrimaryGeneratorAction* theGenerator){
   
 }
 
-void calcStoppingPower(PrimaryGeneratorAction* theGenerator){
+void calcStoppingPower(PrimaryGeneratorAction* theGenerator, DetectorConstruction* myDC){
   G4ParticleDefinition* particle = theGenerator->particle;
   G4EmCalculator* emCal = new G4EmCalculator;
+
   ofstream myfile;
   myfile.open ("Water_Geant4.dat");
-  G4MaterialTable *theMaterialTable = G4Material::GetMaterialTable();
-  G4Material* water = theMaterialTable->at(0);
+  //G4MaterialTable *theMaterialTable = G4Material::GetMaterialTable();
+  G4Material* water = myDC->water;//theMaterialTable->at(0);
+  
+  cout<<emCal->GetCSDARange(105.43*MeV,particle, myDC->water)*mm<<endl;
   for(int j=1;j<50000;j++){
     G4double dedx_w = emCal->ComputeElectronicDEDX( double(j)/10*MeV,particle,water);
     myfile<<double(j)/10*MeV<<" "<<dedx_w*MeV/mm<<" "<<endl;

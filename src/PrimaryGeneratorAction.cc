@@ -47,8 +47,15 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(G4double energy, G4int ANumber, G
   
 
   // Mono-energetic
-  //eneDist->SetEnergyDisType("Mono");
-  //eneDist->SetMonoEnergy(ENER*A*MeV);
+  eneDist = particleSource->GetCurrentSource()->GetEneDist();
+  eneDist->SetEnergyDisType("Mono");
+  eneDist->SetMonoEnergy(ENER*A*MeV);
+
+  //Energy Spectrum
+  //eneDist = particleSource->GetCurrentSource()->GetEneDist();
+  //eneDist->SetEnergyDisType("Arb");
+  //eneDist->ArbEnergyHistoFile("macro/source/protonKEspectrumAtZ-0.1cm_71_163.9MeV.dat");
+  //eneDist->ArbInterpolate("Lin");
   
   ////////////////////////////////////////////////////////////////////////////////////
   //Source 1
@@ -74,13 +81,6 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(G4double energy, G4int ANumber, G
   posDist->SetBeamSigmaInY(PencilBeamStdZ);  
 
 
-  
-  //Energy Spectrum
-  eneDist = particleSource->GetCurrentSource()->GetEneDist();
-  eneDist = particleSource->GetCurrentSource()->GetEneDist();
-  eneDist->SetEnergyDisType("Arb");
-  eneDist->ArbEnergyHistoFile("macro/source/protonKEspectrumAtZ-0.1cm_71_163.9MeV.dat");
-  eneDist->ArbInterpolate("Lin");
 
   //Particle type
   particleSource->SetParticleDefinition(particle);
@@ -108,12 +108,6 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(G4double energy, G4int ANumber, G
   angDist->SetMinTheta(0.0);
   angDist->SetMaxTheta(1.0);
   
-  //Energy Spectrum
-  eneDist = particleSource->GetCurrentSource()->GetEneDist();
-  eneDist->SetEnergyDisType("Arb");
-  eneDist->ArbEnergyHistoFile("macro/source/protonKEspectrumAtZ-0.1cm_71_163.9MeV.dat");
-  eneDist->ArbInterpolate("Lin");
-
   //Particle type
   particleSource->SetParticleDefinition(particle);
 

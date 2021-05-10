@@ -771,7 +771,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   else if(thePhantom =="SlantedEdge"){
     
-    G4Box* WaterBox  = new G4Box("WaterBox", 15./2*cm, PhantomHalfY, PhantomHalfZ);
+    G4Box* WaterBox  = new G4Box("WaterBox", 10./2*cm, PhantomHalfY, PhantomHalfZ);
     G4LogicalVolume* WaterBox_log = new G4LogicalVolume(WaterBox, water, "WaterBox_log");
     G4PVPlacement* watercont_phys = new G4PVPlacement(0,G4ThreeVector(0,0,0),"Watercont_phys",WaterBox_log,cont_phys,false,0);
     

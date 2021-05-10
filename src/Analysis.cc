@@ -4,8 +4,8 @@
 #include "TFile.h"
 #include "TH3D.h"
 #include "TH3F.h"
-#include "TH2D.h"
-#include "TH1D.h"
+#include "TH2F.h"
+#include "TH1F.h"
 #include "TProfile2D.h"
 #include "TMap.h"
 #include "globals.hh"
@@ -57,26 +57,39 @@ Analysis::Analysis(G4int thread, G4double angle,G4String theName){
   Entries_Tot->Sumw2(false);
   LET_Tot->Sumw2(false);*/
 
-  XYProj_Tot  = new TH2D("XYProj_Tot", "XYProj_Tot", NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX, 
+  XYProj_Tot  = new TH2F("XYProj_Tot", "XYProj_Tot", NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX, 
 			       NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY);
 
-  XZProj_Tot  = new TH2D("XZProj_Tot", "XZProj_Tot", NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX, 
+  XZProj_Tot  = new TH2F("XZProj_Tot", "XZProj_Tot", NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX, 
 			       NbinsZ, -theDetector->ScintHalfZ, theDetector->ScintHalfZ);
   
-  YZProj_Tot  = new TH2D("YZProj_Tot", "YZProj_Tot", NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY, 
+  YZProj_Tot  = new TH2F("YZProj_Tot", "YZProj_Tot", NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY, 
 			       NbinsZ, -theDetector->ScintHalfZ, theDetector->ScintHalfZ);
 
-  XYProj_Tot_Q  = new TH2D("XYProj_Tot_Q", "XYProj_Tot_Q", NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX, 
+  XYProj_Tot_Q  = new TH2F("XYProj_Tot_Q", "XYProj_Tot_Q", NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX, 
 				 NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY);
 
-  XZProj_Tot_Q  = new TH2D("XZProj_Tot_Q", "XZProj_Tot_Q", NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX, 
+  XZProj_Tot_Q  = new TH2F("XZProj_Tot_Q", "XZProj_Tot_Q", NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX, 
 				 NbinsZ, -theDetector->ScintHalfZ, theDetector->ScintHalfZ);
 
-  YZProj_Tot_Q  = new TH2D("YZProj_Tot_Q", "YZProj_Tot_Q", NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY,
+  YZProj_Tot_Q  = new TH2F("YZProj_Tot_Q", "YZProj_Tot_Q", NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY,
 				 NbinsZ, -theDetector->ScintHalfZ, theDetector->ScintHalfZ);  
   
 
-  t = new TTree("phase","PS");
+  Front         = new TProfile2D("Front", "Front", NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY, NbinsZ, -theDetector->ScintHalfZ, theDetector->ScintHalfZ, "s");
+  Back          = new TProfile2D("Back", "Back", NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY, NbinsZ, -theDetector->ScintHalfZ, theDetector->ScintHalfZ, "s");
+
+  std::string line;
+  std::ifstream SPWater ("Water_Geant4_P.dat");
+  double data[3];
+  while(getline(SPWater, line)) {
+    stringstream ss(line);
+    for(int i=0;i<3;i++) ss >> data[i];
+    Energy.push_back(data[0]);
+    dEdXBins.push_back(data[1]);
+  }
+
+  /*t = new TTree("phase","PS");
   t->Branch("x0",&x0,"x0/F");
   t->Branch("y0",&y0,"y0/F");
   t->Branch("z0",&z0,"z0/F");
@@ -99,27 +112,29 @@ Analysis::Analysis(G4int thread, G4double angle,G4String theName){
   t->Branch("part_name",&part_name);
   t->Branch("idPBY",&idPBY,"idPBY/I");
   t->Branch("idPBZ",&idPBZ,"idPBZ/I");
-  
+  */
   for(int i =0;i<NPBY*NPBZ;i++){
 
     // Non Quenched
     /*
     PDD[i]      = new TH1D(Form("PDD_%d",i),Form("PDD_%d",i),NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX);
-    ZXProj[i]   = new TH2D(Form("ZXProj_%d",i), Form("ZXProj_%d",i), NbinsZ, -theDetector->ScintHalfZ, theDetector->ScintHalfZ,
+    ZXProj[i]   = new TH2F(Form("ZXProj_%d",i), Form("ZXProj_%d",i), NbinsZ, -theDetector->ScintHalfZ, theDetector->ScintHalfZ,
     				 NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX);
-    YXProj[i]   = new TH2D(Form("YXProj_%d",i), Form("YXProj_%d",i), NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY,
+    YXProj[i]   = new TH2F(Form("YXProj_%d",i), Form("YXProj_%d",i), NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY,
     				 NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX);
-    YZProj[i]   = new TH2D(Form("YZProj_%d",i), Form("YZProj_%d",i), NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY,
+    YZProj[i]   = new TH2F(Form("YZProj_%d",i), Form("YZProj_%d",i), NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY,
     				 NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX);
     */
     //Quenched
-    PDD_Q[i]      = new TH1D(Form("PDD_Q_%d",i),Form("PDD_Q_%d",i),NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX);
-    ZXProj_Q[i]   = new TH2D(Form("ZXProj_Q_%d",i), Form("ZXProj_Q_%d",i), NbinsZ, -theDetector->ScintHalfZ, theDetector->ScintHalfZ,
+
+      PDD_Q[i]      = new TH1F(Form("PDD_Q_%d",i),Form("PDD_Q_%d",i),NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX);
+    ZXProj_Q[i]   = new TH2F(Form("ZXProj_Q_%d",i), Form("ZXProj_Q_%d",i), NbinsZ, -theDetector->ScintHalfZ, theDetector->ScintHalfZ,
     				 NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX);
-    YXProj_Q[i]   = new TH2D(Form("YXProj_Q_%d",i), Form("YXProj_Q_%d",i), NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY,
+    YXProj_Q[i]   = new TH2F(Form("YXProj_Q_%d",i), Form("YXProj_Q_%d",i), NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY,
     NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX);
-    YZProj_Q[i]   = new TH2D(Form("YZProj_Q_%d",i), Form("YZProj_Q_%d",i), NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY,
+    YZProj_Q[i]   = new TH2F(Form("YZProj_Q_%d",i), Form("YZProj_Q_%d",i), NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY,
     				 NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX);
+
   }  
 }
 
@@ -151,9 +166,14 @@ void Analysis::RearFrontDetector(G4Step* aStep, G4String theName){
     part_name  = aStep->GetTrack()->GetDynamicParticle()->GetDefinition()->GetParticleName();
     idPBY = theGenerator->idPBY;
     idPBZ = theGenerator->idPBZ;
-    t->Fill();
+    if(part_name.compare("gamma")!=0 && part_name.compare("neutron")!=0 && part_name.compare("e-")!=0){      
+      double WET = findWET(Einit, Estop);
+      Front->Fill(y0,z0,WET);
+      Back->Fill(y1,z1,WET);
+    }
   }
 }
+
 void Analysis::FillScintillatorDose(G4Step* aStep)
 {
   part_name  = aStep->GetTrack()->GetDynamicParticle()->GetDefinition()->GetParticleName();
@@ -173,19 +193,17 @@ void Analysis::FillScintillatorDose(G4Step* aStep)
     L    = dX*A*LET/(1+ kB*LET);
 
     // For particles count
-    /*if(aStep->GetTrack()->GetTrackStatus() == fStopAndKill){ // End of Track
+    /*
+    if(aStep->GetTrack()->GetTrackStatus() == fStopAndKill){ // End of Track
       if(aStep->GetTrack()->GetCreatorProcess()==0){ // Primary Particle
 	// For the pencil beams  
-	PDD[theGenerator->idPBGlobal]->Fill(x_scint,1); // -- Non Quenched
-	//PDD_Q[theGenerator->idPBGlobal]->Fill(x_scint,L); // Quenched
-	
+	//PDD[theGenerator->idPBGlobal]->Fill(x_scint,1); // -- Non Quenched
 	//Distal projection beam by beam
-	YXProj[theGenerator->idPBGlobal]->Fill(y_scint,x_scint,1);
-	ZXProj[theGenerator->idPBGlobal]->Fill(z_scint,x_scint,1);
-	//YXProj_Q[theGenerator->idPBGlobal]->Fill(y_scint,z_scint,L);    
+	//YXProj[theGenerator->idPBGlobal]->Fill(y_scint,x_scint,1);
+	//ZXProj[theGenerator->idPBGlobal]->Fill(z_scint,x_scint,1);
+	//YZProj[theGenerator->idPBGlobal]->Fill(z_scint,x_scint,1);	
       }
-    }*/
-
+      }*/
     
     //Lateral/Distal projection beam by beam 2-D (energy)
     //PDD[theGenerator->idPBGlobal]->Fill(x_scint,Estop_scint); 
@@ -200,6 +218,7 @@ void Analysis::FillScintillatorDose(G4Step* aStep)
     YZProj_Q[theGenerator->idPBGlobal]->Fill(z_scint,x_scint,L);    
     
     //Total Projections
+    /*
     XYProj_Tot->Fill(x_scint,y_scint,Estop_scint);
     XZProj_Tot->Fill(x_scint,z_scint,Estop_scint);
     YZProj_Tot->Fill(y_scint,z_scint,Estop_scint);
@@ -207,7 +226,7 @@ void Analysis::FillScintillatorDose(G4Step* aStep)
     XYProj_Tot_Q->Fill(x_scint,y_scint,L);
     XZProj_Tot_Q->Fill(x_scint,z_scint,L);
     YZProj_Tot_Q->Fill(y_scint,z_scint,L);
-
+    */
     // Bin By Bin
     //binGlobal = Edep_Tot->FindBin(x_scint,y_scint,z_scint); // Global bin associated with this voxel x-y-z    
     // pair<float,int> dict1 = pair<float,int>(LET, 1);
@@ -230,7 +249,7 @@ void Analysis::Save(){
   cout<<"Recording"<<endl;
   f1->cd();
   // Single Event
-  t->Write("",TObject::kOverwrite);  
+  //t->Write("",TObject::kOverwrite);  
 
   // Full 3-D Histogram
   /*
@@ -239,7 +258,7 @@ void Analysis::Save(){
   LET_Tot->Write("",TObject::kOverwrite);
   L_Tot->Write("",TObject::kOverwrite);
   */
-
+  /*
   // Integrated 2-D projection
   XYProj_Tot->Write("",TObject::kOverwrite);
   XZProj_Tot->Write("",TObject::kOverwrite);
@@ -247,13 +266,17 @@ void Analysis::Save(){
   XYProj_Tot_Q->Write("",TObject::kOverwrite);
   XZProj_Tot_Q->Write("",TObject::kOverwrite);
   YZProj_Tot_Q->Write("",TObject::kOverwrite);
+  */
   
+  Front->Write("",TObject::kOverwrite);
+  Back->Write("",TObject::kOverwrite);
+
   // PDD Pencil Beam By Pencil Beam (Energy)
-  /*f1->mkdir("PDDList");
+  /*
+  f1->mkdir("PDDList");
   f1->cd("PDDList");
   for(int i =0;i<NPBY*NPBZ;i++) PDD[i]->Write("",TObject::kOverwrite);
   f1->cd();  
-
 
   // 2-D Projection Pencil Beam By Pencil Beam (Energy)
   f1->mkdir("YZProj");
@@ -272,31 +295,34 @@ void Analysis::Save(){
   f1->cd("ZXProj");
   for(int i =0;i<NPBY*NPBZ;i++) ZXProj[i]->Write("",TObject::kOverwrite);
   f1->cd();  
-  */  
-  
+  */
+
   // PDD Pencil Beam By Pencil Beam (Quenched Light)
   f1->mkdir("PDDList_Q");
   f1->cd("PDDList_Q");
   for(int i =0;i<NPBY*NPBZ;i++) PDD_Q[i]->Write("",TObject::kOverwrite);
   f1->cd();  
-
+  
   //2-D Projection Pencil Beam By Pencil Beam (Quenched Light)
   f1->mkdir("ZXProj_Q");
   f1->cd("ZXProj_Q");
   for(int i =0;i<NPBY*NPBZ;i++) ZXProj_Q[i]->Write("",TObject::kOverwrite);
   f1->cd();
-
+  
   // 2-D Projection Pencil Beam By Pencil Beam (Quenched Light)
+
   f1->mkdir("YZProj_Q");
   f1->cd("YZProj_Q");
   for(int i =0;i<NPBY*NPBZ;i++) YZProj_Q[i]->Write("",TObject::kOverwrite);
   f1->cd();
 
+  
   // 2-D Projection Pencil Beam By Pencil Beam (Quenched Light)
   f1->mkdir("YXProj_Q");
   f1->cd("YXProj_Q");
   for(int i =0;i<NPBY*NPBZ;i++) YXProj_Q[i]->Write("",TObject::kOverwrite);
-  f1->cd(); 
+  f1->cd();
+
   
   // 3-D histogram Pencil Beam By Pencil Beam -- Sparse
   /*
@@ -345,4 +371,14 @@ void Analysis::Save(){
   t4->Write("",TObject::kOverwrite);     
   f1->Close();
 
+}
+
+double Analysis::findWET(double Ein,double Eout){
+  int it_Einit = lower_bound(Energy.begin(), Energy.end(), Ein)-Energy.begin();
+  int it_Estop = lower_bound(Energy.begin(), Energy.end(), Eout)-Energy.begin();
+  double WET = 0 ;
+  for(int i=it_Estop;i<it_Einit;i++){
+    WET += 0.1/dEdXBins[i];
+  }
+  return WET;
 }

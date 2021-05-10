@@ -85,7 +85,18 @@ PhysicsList::PhysicsList(G4String& parWorldName):G4VModularPhysicsList(),pWorldN
   //AddPhysicsList("binary_ion");
   //AddPhysicsList("elastic");
   //AddPhysicsList("qmd_ion_ion_inelastic");
+  G4EmParameters* param = G4EmParameters::Instance();
+  param->SetDefaults();
+  param->SetVerbose(1);
+  param->SetMinEnergy(100*eV);
+  param->SetMaxEnergy(10*GeV);
+  param->SetBuildCSDARange(true);
+  param->SetMaxEnergyForCSDARange(10*GeV);
+  //param->SetMscRangeFactor(0.06);
+  //SetPhysicsType(bElectromagnetic);
+  
 
+  
 }
 
 /////////////////////////////////////////////////////////////////////////////

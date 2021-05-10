@@ -11,8 +11,8 @@ class G4Step;
 class TFile ;
 class TTree ;
 class TH3F  ;
-class TH2D  ;
-class TH1D  ;
+class TH2F  ;
+class TH1F  ;
 class TProfile2D;
 class TMap  ;
 class PrimaryGeneratorAction;
@@ -37,16 +37,17 @@ public:
   TH3F* Entries_Tot;
   TH3F* LET_Tot;
 
-  TH2D* XYProj_Tot;
-  TH2D* XZProj_Tot;
-  TH2D* YZProj_Tot;
+  TH2F* XYProj_Tot;
+  TH2F* XZProj_Tot;
+  TH2F* YZProj_Tot;
 
-  TH2D* XYProj_Tot_Q;
-  TH2D* XZProj_Tot_Q;
-  TH2D* YZProj_Tot_Q;
+  TH2F* XYProj_Tot_Q;
+  TH2F* XZProj_Tot_Q;
+  TH2F* YZProj_Tot_Q;
   void Save();
   void RearFrontDetector(G4Step* aStep, G4String theName);
   void FillScintillatorDose(G4Step*  aStep);
+  double findWET(double, double);
   vector<double>* tracks_X;
   vector<double>* tracks_Y;
   vector<double>* tracks_Z;
@@ -79,18 +80,28 @@ private:
   float  theta_y1, theta_z1;
   float  Einit,Estop, EnergyMid,LET;
   int N;
+  vector<double> Energy;
+  vector<double> dEdXBins;
+
   G4int  idPBY, idPBZ;
 
   // Non Quenched
-  /*TH1D* PDD[NPBY*NPBZ];
-  TH2D* YXProj[NPBY*NPBZ];
-  TH2D* ZXProj[NPBY*NPBZ];
-  TH2D* YZProj[NPBY*NPBZ];*/
+  /*
+  TH1D* PDD[NPBY*NPBZ];  
+  TH2F* YXProj[NPBY*NPBZ];
+  TH2F* ZXProj[NPBY*NPBZ];
+  TH2F* YZProj[NPBY*NPBZ];
+  */
 
   //Quenched
-  TH1D* PDD_Q[NPBY*NPBZ];  
-  TH2D* YXProj_Q[NPBY*NPBZ];  
-  TH2D* ZXProj_Q[NPBY*NPBZ];
-  TH2D* YZProj_Q[NPBY*NPBZ];
+  TH1F* PDD_Q[NPBY*NPBZ];  
+  TH2F* YXProj_Q[NPBY*NPBZ];  
+  TH2F* ZXProj_Q[NPBY*NPBZ];
+  TH2F* YZProj_Q[NPBY*NPBZ];
+  
+  //Single Event radiograph
+  TProfile2D* Front;
+  TProfile2D* Back;
+
 };
 #endif
