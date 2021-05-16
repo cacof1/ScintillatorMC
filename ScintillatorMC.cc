@@ -92,8 +92,8 @@ int main(int argc,char** argv) {
 
   runManager->BeamOn( nProtons );  
   theAnalysis->Save();
-  calcRSP(theGenerator);
-  calcStoppingPower(theGenerator, myDC);
+  //calcRSP(theGenerator);
+  //calcStoppingPower(theGenerator, myDC);
   //delete visManager;
   return 0;
   delete runManager;
