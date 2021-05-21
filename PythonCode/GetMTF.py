@@ -56,8 +56,17 @@ except:
 ## Get the image data
 f=TFile(fileName)
 print(f.ls())
-hist = f.Get("YZProj_Tot_Q")
-data = hist2array(hist)
+
+f=TFile(sys.argv[1])
+data = np.zeros((150,150))
+for i in range(0,2500):
+    hist = f.Get("YZProj_Q/YZProj_Q_"+str(i))
+    hist = hist2array(hist)
+    temp = hist/np.max(hist)
+    data +=hist
+
+#hist = f.Get("YZProj_Tot_Q")
+#data = hist2array(hist)
 
 npixX = data.shape[1]
 npixY = data.shape[0]
