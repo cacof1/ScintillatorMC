@@ -215,7 +215,7 @@ void Analysis::FillScintillatorDose(G4Step* aStep)
     PDD_Q[theGenerator->idPBGlobal]->Fill(x_scint,L); // Quenched    
     YXProj_Q[theGenerator->idPBGlobal]->Fill(y_scint,x_scint,L);
     ZXProj_Q[theGenerator->idPBGlobal]->Fill(z_scint,x_scint,L);
-    YZProj_Q[theGenerator->idPBGlobal]->Fill(z_scint,x_scint,L);    
+    YZProj_Q[theGenerator->idPBGlobal]->Fill(z_scint,y_scint,L);    
     
     //Total Projections
     /*
