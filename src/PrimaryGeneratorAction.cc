@@ -30,9 +30,12 @@ using namespace std;
 
 PrimaryGeneratorAction* PrimaryGeneratorAction::theGenerator = NULL;
 
-PrimaryGeneratorAction::PrimaryGeneratorAction(G4double energy, G4int ANumber, G4int Nprot):ENER(energy), A(ANumber), Nprotons(Nprot)
+PrimaryGeneratorAction::PrimaryGeneratorAction(G4double energy, G4int ANumber, G4int Nprot, G4int NPencilBeam):ENER(energy), A(ANumber), Nprotons(Nprot),NPB(NPencilBeam) 
 { 
 
+  NPBY = NPB;
+  NPBZ = NPB;
+  
   theGenerator = this;
   theDetector = DetectorConstruction::GetInstance();
 
@@ -118,9 +121,9 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(G4double energy, G4int ANumber, G
   //Pencil beam parameters
   PencilBeamPosY = linspace(-fieldSizeY/2, fieldSizeY/2, NPBY); // mm
   PencilBeamPosZ = linspace(-fieldSizeZ/2, fieldSizeZ/2, NPBZ); // mm
-  for(int i =0; i<NPBY; i++){
-    cout<<PencilBeamPosY[i]<<endl;
-  }
+  //for(int i =0; i<NPBY; i++){
+    //cout<<PencilBeamPosY[i]<<endl;
+  //}
     
 }
   

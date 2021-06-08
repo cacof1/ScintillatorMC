@@ -4,6 +4,9 @@
 #include "globals.hh"
 #include "TTree.h"
 #include "TMap.h"
+#include "TH1F.h"
+#include <vector>
+#include <iostream>
 #include "PrimaryGeneratorAction.hh"
 
 using namespace std;
@@ -30,8 +33,7 @@ public:
   TTree  *t2; // Pencil beam dose and LET
   TFile *f1;
 
-  //map<int,pair<float,float>> Edep_PB[NPBY*NPBZ];
-  map<int,pair<float,pair<float,int>>> Edep_PB[NPBY*NPBZ];
+
   TH3F* Edep_Tot;
   TH3F* L_Tot;  
   TH3F* Entries_Tot;
@@ -87,21 +89,28 @@ private:
 
   // Non Quenched
   /*
-  TH1D* PDD[NPBY*NPBZ];  
-  TH2F* YXProj[NPBY*NPBZ];
-  TH2F* ZXProj[NPBY*NPBZ];
-  TH2F* YZProj[NPBY*NPBZ];
+  TH1D* PDD[theGenerator->NPBY*theGenerator->NPBZ];  
+  TH2F* YXProj[theGenerator->NPBY*theGenerator->NPBZ];
+  TH2F* ZXProj[theGenerator->NPBY*theGenerator->NPBZ];
+  TH2F* YZProj[theGenerator->NPBY*theGenerator->NPBZ];
   */
-
+ 
   //Quenched
-  TH1F* PDD_Q[NPBY*NPBZ];  
-  TH2F* YXProj_Q[NPBY*NPBZ];  
-  TH2F* ZXProj_Q[NPBY*NPBZ];
-  TH2F* YZProj_Q[NPBY*NPBZ];
+  /*TH1D* PDD_Q[theGenerator->NPBY*theGenerator->NPBZ];  
+  TH2F* YXProj_Q[theGenerator->NPBY*theGenerator->NPBZ];
+  TH2F* ZXProj_Q[theGenerator->NPBY*theGenerator->NPBZ];
+  TH2F* YZProj_Q[theGenerator->NPBY*theGenerator->NPBZ];*/
+
+  std::vector<TH1F*> PDD_Q    = vector<TH1F*>();
+  std::vector<TH2F*> YXProj_Q = vector<TH2F*>();
+  std::vector<TH2F*> ZXProj_Q = vector<TH2F*>();
+  std::vector<TH2F*> YZProj_Q = vector<TH2F*>();
   
   //Single Event radiograph
   TProfile2D* Front;
   TProfile2D* Back;
 
+  //map<int,pair<float,float>> Edep_PB[theGenerator->NPBY*theGenerator->NPBZ];
+  //map<int,pair<float,pair<float,int>>> Edep_PB[theGenerator->NPBY*theGenerator->NPBZ];
 };
 #endif

@@ -167,7 +167,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   smallSteps->SetUserLimits(new G4UserLimits(1*mm));  
   smallSteps->AddRootLogicalVolume(logicScintillator); 
 
-
   G4RotationMatrix* rotExt = new G4RotationMatrix();
   rotExt->rotateZ(theAngle*pi/180.);
   

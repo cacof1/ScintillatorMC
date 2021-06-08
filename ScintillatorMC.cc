@@ -46,8 +46,9 @@ int main(int argc,char** argv) {
   G4double thick  = atof(argv[5]); // cm
   G4int   thread  = atoi(argv[6]); 
   G4int  ANumber  = atoi(argv[7]); //Atomic Number
+  G4int NPB       = atoi(argv[8]);
   G4String CT     = "";
-  if(argc==9) CT     = argv[8];
+  if(argc==10) CT     = argv[9];
   CLHEP::RanecuEngine *theRanGenerator = new CLHEP::RanecuEngine;  
   theRanGenerator->setSeed(thread);
   CLHEP::HepRandom::setTheEngine(theRanGenerator);
@@ -55,11 +56,8 @@ int main(int argc,char** argv) {
   G4RunManager* runManager   = new G4RunManager;  
   runManager->SetUserInitialization(new PhysicsList(paraWorldName));
   DetectorConstruction* myDC = new DetectorConstruction(Model,angle,thick,CT);
-  cout<<Energy<<" "<<ANumber<<" "<<nProtons<<endl;
-  PrimaryGeneratorAction *theGenerator =  new PrimaryGeneratorAction(Energy,ANumber, nProtons);
-  cout<<__LINE__<<endl;
+  PrimaryGeneratorAction *theGenerator =  new PrimaryGeneratorAction(Energy,ANumber, nProtons,NPB);
   Analysis* theAnalysis      = new Analysis(thread,angle,Model);
-  cout<<__LINE__<<endl;
   //G4ExceptionHandler* handler = new G4ExceptionHandler();
   runManager->SetUserAction(theGenerator);
   runManager->SetUserAction( new SteppingAction() );

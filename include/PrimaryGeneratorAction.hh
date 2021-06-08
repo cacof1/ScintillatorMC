@@ -9,8 +9,8 @@
 #include "G4ThreeVector.hh"
 #include <fstream>
 
-#define NPBY 50
-#define NPBZ 50
+//#define NPBY 50
+//#define NPBZ 50
 using namespace std;
 class G4ParticleGun;
 class G4GeneralParticleSource;
@@ -23,7 +23,7 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
   public:
 
-  PrimaryGeneratorAction(G4double,G4int, G4int);
+  PrimaryGeneratorAction(G4double,G4int, G4int, G4int);
   ~PrimaryGeneratorAction();
   G4double ENER, ESPR, ANGU_X, ANGU_Y, CORR_X, CORR_Y, SPOT_CX, SPOT_CY, SPOT_CZ, SPOT_X, SPOT_Y, SPOT_Z, RAD;
 
@@ -50,7 +50,7 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
   G4double IrradiatedEnergy; 
   G4ParticleDefinition* particle;
   G4int A;
-  G4int Nprotons;
+  G4int Nprotons,NPB, NPBY, NPBZ;
   vector<G4double> beamPosZ;
   vector<G4double> beamPosY;
 
