@@ -1,18 +1,19 @@
-import numpy as np
 from ROOT import *
-import matplotlib.pyplot as plt
 import sys
 from root_numpy import hist2array
+import numpy as np
 from scipy.io import savemat
-
-data = np.zeros((2500,150,150))
-A = TFile(sys.argv[1])
-for i in range(2500):
-    print(A.Get("YZProj_Q/YZProj_Q_"+str(i)))
-    hist = A.Get("YZProj_Q/YZProj_Q_"+str(i)))
-    hist = hist2array(hist)
-    data[i] = hist
-
-#hist = hist2array(A.Get("L_Tot"))
-dc   = {"hist":data}
-savemat("Slantde_edge_matlab_matrix.mat", dc)
+f = TFile(sys.argv[1])
+print(f.ls())
+## First getting the info
+hist = hist2array(f.Get("YZProj_Q/YZProj_Q_0"))
+NX, NY = hist.shape
+NPB = 0
+tree = f.Get("Header")
+for event in tree: NPB = event.NPB
+A = np.zeros((NPB, NX, NY),dtype=np.float32)
+for i in range(0,NPB):
+    Edep       = f.Get("YZProj_Q/YZProj_Q_"+str(i))
+    Edep       = hist2array(Edep)
+    A[i] = Edep
+savemat(sys.argv[1][:-5]+".mat",{"arr":A})

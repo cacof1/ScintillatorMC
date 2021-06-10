@@ -58,15 +58,17 @@ f=TFile(fileName)
 print(f.ls())
 
 f=TFile(sys.argv[1])
-data = np.zeros((150,150))
-for i in range(0,2500):
+hist = hist2array(f.Get("YZProj_Q/YZProj_Q_0"))
+NX, NY = hist.shape
+NPB = 0
+tree = f.Get("Header")
+data = np.zeros((NX,NY))
+for event in tree: NPB = event.NPB
+for i in range(0,NPB):
     hist = f.Get("YZProj_Q/YZProj_Q_"+str(i))
     hist = hist2array(hist)
     temp = hist/np.max(hist)
     data +=hist
-
-#hist = f.Get("YZProj_Tot_Q")
-#data = hist2array(hist)
 
 npixX = data.shape[1]
 npixY = data.shape[0]
@@ -81,7 +83,7 @@ print("Image pixels in X/Y:", npixX, npixY)
 pixSize = FOV/npixX
 
 data    = np.fliplr(data)
-xstart,xend, ystart, yend = 40, 60, 65,88
+xstart,xend, ystart, yend = 20, 80, 65,88
 angle = 2.5
 
 print("ROI start [xstart:xend,ystart:yend]",xstart,xend,ystart,yend)

@@ -1,25 +1,19 @@
 from ROOT import *
 import sys
+from root_numpy import hist2array
 import numpy as np
-import matplotlib.pyplot as plt
-def GetHistArray(hist):
-    n     = [hist.GetNbinsY()+2,hist.GetNbinsX()+2]
-    dx    = hist.GetXaxis().GetBinWidth(0)
-    n2    = (n[0])*(n[1])
-
-    d     = hist.GetArray()
-    d.SetSize(n2)
-    histA = np.array(d)
-    histA = np.reshape(histA,n)[1:-1,1:-1]
-    return histA,dx
-
+from scipy.io import savemat
 f = TFile(sys.argv[1])
-print f.ls()
-A = np.zeros((10000, 300, 300),dtype=np.float32)
-for i in range(0,100):
-    if(i%100==0): print i
+print(f.ls())
+## First getting the info
+hist = hist2array(f.Get("YZProj_Q/YZProj_Q_0"))
+NX, NY = hist.shape
+NPB = 0
+tree = f.Get("Header")
+for event in tree: NPB = event.NPB
+A = np.zeros((NPB, NX, NY),dtype=np.float32)
+for i in range(0,NPB):
     Edep       = f.Get("YZProj_Q/YZProj_Q_"+str(i))
-    Edep,dx    = GetHistArray(Edep)
+    Edep       = hist2array(Edep)
     A[i] = Edep
-    #np.savetxt("SlantedEdge180Proj/YZProj_"+str(i)+".txt",Edep)
-np.savez("SlantedEdge180.npz",A)
+savemat(sys.argv[1][:-5]+".mat",{"arr":A})
