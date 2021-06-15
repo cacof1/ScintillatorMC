@@ -34,11 +34,11 @@ Analysis::Analysis(G4int thread, G4double angle,G4String theName){
   NbinsX = 150; NbinsY = 150; NbinsZ = 150;
 
   //Full histogram
-  /*Edep_Tot    = new TH3F("Edep_Tot", "Edep_Tot", NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX, 
+  Edep_Tot    = new TH3F("Edep_Tot", "Edep_Tot", NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX, 
 		                                 NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY,
 		                                 NbinsZ, -theDetector->ScintHalfZ, theDetector->ScintHalfZ);
   
-
+  
   L_Tot       = new TH3F("L_Tot", "L_Tot", NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX, 
 		                                 NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY,
 		                                 NbinsZ, -theDetector->ScintHalfZ, theDetector->ScintHalfZ);
@@ -51,8 +51,6 @@ Analysis::Analysis(G4int thread, G4double angle,G4String theName){
   Entries_Tot = new TH3F("Entries_Tot", "Entries_Tot", NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX, 
  		                                       NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY,
                                                        NbinsZ, -theDetector->ScintHalfZ, theDetector->ScintHalfZ);
-  */
-  
   // Full projection cumulative
   XYProj_Tot  = new TH2F("XYProj_Tot", "XYProj_Tot", NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX, 
 			       NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY);
@@ -247,10 +245,10 @@ void Analysis::FillScintillatorDose(G4Step* aStep)
       }*/
 
     
-    /*LET_Tot->Fill(x_scint,y_scint,z_scint,LET);     
-      Edep_Tot->Fill(x_scint, y_scint, z_scint, Estop_scint);
-      L_Tot->Fill(x_scint, y_scint, z_scint, L);    
-      Entries_Tot->Fill(x_scint, y_scint, z_scint);*/
+    LET_Tot->Fill(x_scint,y_scint,z_scint,LET);     
+    Edep_Tot->Fill(x_scint, y_scint, z_scint, Estop_scint);
+    L_Tot->Fill(x_scint, y_scint, z_scint, L);    
+    Entries_Tot->Fill(x_scint, y_scint, z_scint);
   }
 }
 void Analysis::Save(){
@@ -260,12 +258,12 @@ void Analysis::Save(){
   //t->Write("",TObject::kOverwrite);  
 
   // Full 3-D Histogram
-  /*
+
     Edep_Tot->Write("",TObject::kOverwrite);
     Entries_Tot->Write("",TObject::kOverwrite);
     LET_Tot->Write("",TObject::kOverwrite);
     L_Tot->Write("",TObject::kOverwrite);
-  */
+
 
   /*
   // Integrated 2-D projection
