@@ -46,7 +46,7 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
   Float_t x,y,z,theta,phi,Einit;
   G4ThreeVector Position;
   G4ThreeVector Momentum;
-  G4int nProtonsGenerated;   
+  G4int nProtonsGenerated,nProtonsToGenerate;   
   G4double IrradiatedEnergy; 
   G4ParticleDefinition* particle;
   G4int A;

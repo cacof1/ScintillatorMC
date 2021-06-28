@@ -34,18 +34,17 @@ void calcStoppingPower(PrimaryGeneratorAction *, DetectorConstruction*);
 int main(int argc,char** argv) {
   gROOT->ProcessLine("#include <vector>");
 
-
   if(argc<=7) {
     cout<<"Please input the following arguments : NParticules Energy Model Angle Thick Thread ANumber"<<endl;
     return 0;
   }
-  G4int nProtons  = atoi(argv[1]); 
+  G4int nProtons  = atoi(argv[1]); // Proton per PB
   G4double Energy = atof(argv[2]); // MeV
-  G4String Model  = argv[3];
+  G4String Model  = argv[3];       // []
   G4double angle  = atof(argv[4]); // Degrees
   G4double thick  = atof(argv[5]); // cm
-  G4int   thread  = atoi(argv[6]); 
-  G4int  ANumber  = atoi(argv[7]); //Atomic Number
+  G4int   thread  = atoi(argv[6]); // []
+  G4int  ANumber  = atoi(argv[7]); // Atomic Number
   G4int NPB       = atoi(argv[8]);
   G4String CT     = "";
   if(argc==10) CT     = argv[9];
@@ -58,7 +57,6 @@ int main(int argc,char** argv) {
   DetectorConstruction* myDC = new DetectorConstruction(Model,angle,thick,CT);
   PrimaryGeneratorAction *theGenerator =  new PrimaryGeneratorAction(Energy,ANumber, nProtons,NPB);
   Analysis* theAnalysis      = new Analysis(thread,angle,Model);
-  //G4ExceptionHandler* handler = new G4ExceptionHandler();
   runManager->SetUserAction(theGenerator);
   runManager->SetUserAction( new SteppingAction() );
   runManager->SetUserInitialization( myDC );
@@ -88,7 +86,8 @@ int main(int argc,char** argv) {
   ui->SessionStart();
   #endif
 
-  runManager->BeamOn( nProtons );  
+  int NProton_tot = nProtons*NPB*NPB; 
+  runManager->BeamOn(NProton_tot);
   theAnalysis->Save();
   //calcRSP(theGenerator);
   //calcStoppingPower(theGenerator, myDC);
