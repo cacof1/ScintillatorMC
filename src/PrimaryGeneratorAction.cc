@@ -30,7 +30,7 @@ using namespace std;
 
 PrimaryGeneratorAction* PrimaryGeneratorAction::theGenerator = NULL;
 
-PrimaryGeneratorAction::PrimaryGeneratorAction(G4double energy, G4int ANumber, G4int Nprot, G4int NPencilBeam):ENER(energy), A(ANumber), Nprotons(Nprot),NPB(NPencilBeam) 
+PrimaryGeneratorAction::PrimaryGeneratorAction(G4double energy, G4int ANumber, G4int Nprot, G4int NPencilBeam, G4double sigmaZ, G4double sigmaY):ENER(energy), A(ANumber), Nprotons(Nprot),NPB(NPencilBeam) 
 { 
 
   NPBY = NPB;
@@ -63,8 +63,8 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(G4double energy, G4int ANumber, G
   //Source 1
   //Position
 
-  PencilBeamStdY = 6.393*mm;
-  PencilBeamStdZ = 6.5524*mm;
+  PencilBeamStdY = sigmaY*mm;//6.393*mm;
+  PencilBeamStdZ = sigmaZ*mm;//6.5524*mm;
   particleSource->SetCurrentSourceIntensity(0.75);
   posDist = particleSource->GetCurrentSource()->GetPosDist();
   posDist->SetPosRot1(G4ThreeVector(0,0,1));
@@ -90,8 +90,8 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(G4double energy, G4int ANumber, G
   //Position
 
   particleSource->AddaSource(0.25);
-  PencilBeamStdY = 12.8434*mm;
-  PencilBeamStdZ = 13.0028*mm;
+  PencilBeamStdY = 2*sigmaY*mm;//12.8434*mm;
+  PencilBeamStdZ = 2*sigmaZ*mm;//13.0028*mm;
   posDist = particleSource->GetCurrentSource()->GetPosDist();
   posDist->SetPosRot1(G4ThreeVector(0,0,1));
   posDist->SetPosDisType("Beam");

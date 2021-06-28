@@ -12,7 +12,7 @@ Prerequesite:
 An example command to run is
 
 ```shell script
-./bin/Linux-g++/ScintillatorMC NParticle Energy Model Angle Thickness Thread ANumber NPB
+./bin/Linux-g++/ScintillatorMC NParticle Energy Model Angle Thickness Thread ANumber NPB sigmaY sigmaZ
 ```
 
 The variables respectively mean:
@@ -25,13 +25,14 @@ The variables respectively mean:
 - **Thread**   : Thread	number to append to the	output root file to distinguish	when running parallel job
 - **ANumber**  : Atomic	mass of	the incoming particle (1 for proton, 4 for helium, etc..)
 - **NPB**      : Number	of pencil beam in either direction, it will be squared to find the total number	of pencil beam.
-
+- **sigmaY**   : Standard deviation of the pencil beam in the Y direction - [mm] (Reference 6.393 mm)
+- **sigmaZ**   : Standard deviation of the pencil beam in the Y direction - [mm] (Reference 6.5524 mm)
 
 
 where you replace every variable by what you wishes (e.g. replace Energy by 200).
 Except if you are using an XCAT phantom, where you run with
 ```shell script
-./bin/Linux-g++/ScintillatorMC NParticle Energy XCAT Angle Thickness Thread ANumber LungPhantom/choose_a_phase.root
+./bin/Linux-g++/ScintillatorMC NParticle Energy XCAT Angle Thickness Thread ANumber NPB sigmaY sigmaZ LungPhantom/choose_a_phase.root
 ```
 
 ## Calibration
@@ -39,7 +40,7 @@ Except if you are using an XCAT phantom, where you run with
 To perform a calibration scan, you need	to input a single pencil beam with the Empty phantom.
 
 ```shell script
-./bin/Linux-g++/ScintillatorMC NParticle Energy Empty Angle Thickness Thread ANumber 1
+./bin/Linux-g++/ScintillatorMC NParticle Energy Empty Angle Thickness Thread ANumber 1 sigmaY sigmaZ
 ```
 where the NPB=1 variable will position the single pencil beam in the middle of the phantom.
 
@@ -63,3 +64,10 @@ Run either of the following:
 python PythonCode/Write2DHist2MatLab.py RootFileName
 python PythonCode/Write3DHist2MatLab.py RootFileName
 ```
+
+## Output data formatting
+All results are saved in the output root file.
+- The simulation parameters are saved in the header TTree. (NPB, SigmaY, SigmaZ, PB positions)
+- 2D projection in each lateral plane (e.g. YZProj or YZProj_Q). The underscript Q stands for quenched which relates to light emission.
+- The 3-D cumulative energy, light, LET and entries histogram in the scintillator.
+- Front/Back represents single event proton radiograph in WET aggregated at the frontal or distal tracker. 

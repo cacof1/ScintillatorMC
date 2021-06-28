@@ -23,7 +23,7 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
   public:
 
-  PrimaryGeneratorAction(G4double,G4int, G4int, G4int);
+  PrimaryGeneratorAction(G4double,G4int, G4int, G4int, G4double, G4double);
   ~PrimaryGeneratorAction();
   G4double ENER, ESPR, ANGU_X, ANGU_Y, CORR_X, CORR_Y, SPOT_CX, SPOT_CY, SPOT_CZ, SPOT_X, SPOT_Y, SPOT_Z, RAD;
 

@@ -34,8 +34,8 @@ void calcStoppingPower(PrimaryGeneratorAction *, DetectorConstruction*);
 int main(int argc,char** argv) {
   gROOT->ProcessLine("#include <vector>");
 
-  if(argc<=7) {
-    cout<<"Please input the following arguments : NParticules Energy Model Angle Thick Thread ANumber"<<endl;
+  if(argc<=10) {
+    cout<<"Please input the following arguments : NParticules Energy Model Angle Thick Thread ANumber NPB sigmaY sigmaZ"<<endl;
     return 0;
   }
   G4int nProtons  = atoi(argv[1]); // Proton per PB
@@ -45,9 +45,11 @@ int main(int argc,char** argv) {
   G4double thick  = atof(argv[5]); // cm
   G4int   thread  = atoi(argv[6]); // []
   G4int  ANumber  = atoi(argv[7]); // Atomic Number
-  G4int NPB       = atoi(argv[8]);
+  G4int NPB       = atoi(argv[8]); // []
+  G4double sigmaY = atof(argv[9]); // mm
+  G4double sigmaZ = atof(argv[10]);// mm
   G4String CT     = "";
-  if(argc==10) CT     = argv[9];
+  if(argc==12) CT     = argv[11];
   CLHEP::RanecuEngine *theRanGenerator = new CLHEP::RanecuEngine;  
   theRanGenerator->setSeed(thread);
   CLHEP::HepRandom::setTheEngine(theRanGenerator);
@@ -55,7 +57,7 @@ int main(int argc,char** argv) {
   G4RunManager* runManager   = new G4RunManager;  
   runManager->SetUserInitialization(new PhysicsList(paraWorldName));
   DetectorConstruction* myDC = new DetectorConstruction(Model,angle,thick,CT);
-  PrimaryGeneratorAction *theGenerator =  new PrimaryGeneratorAction(Energy,ANumber, nProtons,NPB);
+  PrimaryGeneratorAction *theGenerator =  new PrimaryGeneratorAction(Energy,ANumber, nProtons,NPB, sigmaY, sigmaZ);
   Analysis* theAnalysis      = new Analysis(thread,angle,Model);
   runManager->SetUserAction(theGenerator);
   runManager->SetUserAction( new SteppingAction() );
