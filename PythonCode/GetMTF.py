@@ -67,7 +67,6 @@ for event in tree: NPB = event.NPB
 for i in range(0,NPB):
     hist = f.Get("YZProj_Q/YZProj_Q_"+str(i))
     hist = hist2array(hist)
-    temp = hist/np.max(hist)
     data +=hist
 
 npixX = data.shape[1]

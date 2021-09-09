@@ -8,7 +8,7 @@
 #include <vector>
 #include <iostream>
 #include "PrimaryGeneratorAction.hh"
-
+#include "pCTconfig.hh"
 using namespace std;
 class G4Step;
 class TFile ;
@@ -25,7 +25,7 @@ class Analysis
 {
 public:
 
-  Analysis(G4int,G4double, G4String);
+  Analysis();//G4int,G4double, G4String);
   ~Analysis();
   static inline Analysis* GetInstance() { return theAnalysis; }
   void analyseHit(G4Step*,G4String);
@@ -33,6 +33,7 @@ public:
   TTree  *t2; // Pencil beam dose and LET
   TFile *f1;
 
+  pCTconfig* theConfig;
 
   TH3F* Edep_Tot;
   TH3F* L_Tot;  
@@ -110,7 +111,7 @@ private:
   TProfile2D* Front;
   TProfile2D* Back;
 
-  //map<int,pair<float,float>> Edep_PB[theGenerator->NPBY*theGenerator->NPBZ];
+  std::vector<  map<int,pair<float,float>> >  Edep_PB = vector< map<int,pair<float,float>> >(); //theGenerator->NPBY*theGenerator->NPBZ];
   //map<int,pair<float,pair<float,int>>> Edep_PB[theGenerator->NPBY*theGenerator->NPBZ];
 };
 #endif

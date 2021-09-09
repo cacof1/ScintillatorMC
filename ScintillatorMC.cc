@@ -16,7 +16,7 @@
 #include "G4EmCalculator.hh"
 #include "G4Proton.hh"
 #include "G4UnitsTable.hh"
-
+#include "pCTconfig.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
 #include "G4UImanager.hh"
@@ -31,34 +31,61 @@
 using namespace std;
 void calcRSP(PrimaryGeneratorAction *);
 void calcStoppingPower(PrimaryGeneratorAction *, DetectorConstruction*);
-int main(int argc,char** argv) {
+int main(int ,char** argv) {
   gROOT->ProcessLine("#include <vector>");
 
-  if(argc<=10) {
-    cout<<"Please input the following arguments : NParticules Energy Model Angle Thick Thread ANumber NPB sigmaY sigmaZ"<<endl;
-    return 0;
-  }
-  G4int nProtons  = atoi(argv[1]); // Proton per PB
-  G4double Energy = atof(argv[2]); // MeV
-  G4String Model  = argv[3];       // []
-  G4double angle  = atof(argv[4]); // Degrees
-  G4double thick  = atof(argv[5]); // cm
-  G4int   thread  = atoi(argv[6]); // []
-  G4int  ANumber  = atoi(argv[7]); // Atomic Number
-  G4int NPB       = atoi(argv[8]); // []
-  G4double sigmaY = atof(argv[9]); // mm
-  G4double sigmaZ = atof(argv[10]);// mm
+  const string configFile = argv[1];//"pCT_config.txt";
+  pCTconfig cfg(configFile); // Create a class instance for parsing the configuration file             
+
+  G4int nProtons = 1000;
+  cfg.addItem("nProtons", nProtons);
+
+  G4float Energy = 200; // MeV
+  cfg.addItem("Energy", Energy);   
+
+  G4String Model  = "XCAT";       // []
+  cfg.addItem("Model", Model);     
+
+  G4float Angle  = 0; // Degrees
+  cfg.addItem("Angle", Angle);   
+
+  G4float Thickness  = 30; // cm
+  cfg.addItem("Thickness", Thickness);   
+
+  G4int   thread  = 0; // []
+  cfg.addItem("thread", thread);   
+
+  G4int  ANumber  = 1; // Atomic Number
+  cfg.addItem("ANumber", ANumber);
+  
+  G4int NPB       = 100; // []
+  cfg.addItem("NPB", NPB);
+  
+  G4float sigmaX_pos = 5;// mm
+  cfg.addItem("sigmaX_pos", sigmaX_pos);
+
+  G4float sigmaY_pos = 5; // mm
+  cfg.addItem("sigmaY_pos", sigmaY_pos);
+    
+  G4float sigma_AngX = 25; // mRad
+  cfg.addItem("sigma_AngX", sigma_AngX);
+  
+  G4float sigma_AngY = 25;// mRad
+  cfg.addItem("sigma_AngY", sigma_AngY);  
+
   G4String CT     = "";
-  if(argc==12) CT     = argv[11];
+  cfg.addItem("CT", CT);   
+
+  cfg.Configure();
   CLHEP::RanecuEngine *theRanGenerator = new CLHEP::RanecuEngine;  
   theRanGenerator->setSeed(thread);
   CLHEP::HepRandom::setTheEngine(theRanGenerator);
-  G4String paraWorldName = "";
   G4RunManager* runManager   = new G4RunManager;  
-  runManager->SetUserInitialization(new PhysicsList(paraWorldName));
-  DetectorConstruction* myDC = new DetectorConstruction(Model,angle,thick,CT);
-  PrimaryGeneratorAction *theGenerator =  new PrimaryGeneratorAction(Energy,ANumber, nProtons,NPB, sigmaY, sigmaZ);
-  Analysis* theAnalysis      = new Analysis(thread,angle,Model);
+  runManager->SetUserInitialization(new PhysicsList());
+  DetectorConstruction* myDC = new DetectorConstruction();
+  PrimaryGeneratorAction *theGenerator =  new PrimaryGeneratorAction();
+  Analysis* theAnalysis      = new Analysis();
+
   runManager->SetUserAction(theGenerator);
   runManager->SetUserAction( new SteppingAction() );
   runManager->SetUserInitialization( myDC );
@@ -88,7 +115,7 @@ int main(int argc,char** argv) {
   ui->SessionStart();
   #endif
 
-  int NProton_tot = nProtons*NPB*NPB; 
+  int NProton_tot = cfg.item_int["NPB"]*cfg.item_int["NPB"]*cfg.item_int["nProtons"];
   runManager->BeamOn(NProton_tot);
   theAnalysis->Save();
   //calcRSP(theGenerator);
@@ -105,21 +132,21 @@ void calcRSP(PrimaryGeneratorAction* theGenerator){
   myfile.open ("RSP.txt");
   myfile<<"Density RelativeElectronDensity IValue RSP Name"<<endl; 
   G4MaterialTable *theMaterialTable = G4Material::GetMaterialTable();
-  G4double waterelectrondensity = 0;
+  G4float waterelectrondensity = 0;
   for(size_t i =0;i<theMaterialTable->size();i++){
       
     G4int I = 0;
-    G4double tot =0;
+    G4float tot =0;
     G4Material* water = theMaterialTable->at(0);
     waterelectrondensity = water->GetElectronDensity()/(g/cm3);
     for(int j=1;j<50000;j++){
-      G4double dedx_w = emCal->ComputeElectronicDEDX( double(j)/10*MeV,particle,water);
-      G4double dedx_b = emCal->ComputeElectronicDEDX( double(j)/10*MeV,particle,theMaterialTable->at(i));
+      G4float dedx_w = emCal->ComputeElectronicDEDX( float(j)/10*MeV,particle,water);
+      G4float dedx_b = emCal->ComputeElectronicDEDX( float(j)/10*MeV,particle,theMaterialTable->at(i));
       tot +=dedx_b/dedx_w;
       I+=1;
     }
-    G4double RSP = tot/I;
-    G4double electrondensity = theMaterialTable->at(i)->GetElectronDensity()/(g/cm3);
+    G4float RSP = tot/I;
+    G4float electrondensity = theMaterialTable->at(i)->GetElectronDensity()/(g/cm3);
     myfile<<theMaterialTable->at(i)->GetDensity()/(g/cm3)<<" "<<electrondensity/waterelectrondensity<<" "<<theMaterialTable->at(i)->GetIonisation()->GetMeanExcitationEnergy()/eV<<" "<<RSP<<" "<<theMaterialTable->at(i)->GetName()<<endl;
     }
   myfile.close();
@@ -137,8 +164,8 @@ void calcStoppingPower(PrimaryGeneratorAction* theGenerator, DetectorConstructio
   
   cout<<emCal->GetCSDARange(105.43*MeV,particle, myDC->water)*mm<<endl;
   for(int j=1;j<50000;j++){
-    G4double dedx_w = emCal->ComputeElectronicDEDX( double(j)/10*MeV,particle,water);
-    myfile<<double(j)/10*MeV<<" "<<dedx_w*MeV/mm<<" "<<endl;
+    G4float dedx_w = emCal->ComputeElectronicDEDX( float(j)/10*MeV,particle,water);
+    myfile<<float(j)/10*MeV<<" "<<dedx_w*MeV/mm<<" "<<endl;
   }
   myfile.close();
 

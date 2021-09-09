@@ -4,6 +4,7 @@
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 #include "OrganicMaterial.hh"
+#include "pCTconfig.hh"
 class G4VPhysicalVolume;
 class G4LogicalVolume;
 class OrganicMaterial;
@@ -15,7 +16,7 @@ class TH3S;
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
-  DetectorConstruction(G4String,G4double,G4double,G4String);
+  DetectorConstruction();//G4String,G4double,G4double,G4String);
   ~DetectorConstruction();
   virtual G4VPhysicalVolume* Construct();  
   static inline DetectorConstruction* GetInstance() { return theDetector; }
@@ -38,6 +39,7 @@ public:
   G4Material* water;
   G4ProductionCuts*  fCuts;
 
+  pCTconfig* theConfig;
   //XCAT
   G4PhantomParameterisation* param;
   G4PVParameterised* phantomPhys;

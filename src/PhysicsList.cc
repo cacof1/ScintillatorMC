@@ -49,7 +49,7 @@
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
 /////////////////////////////////////////////////////////////////////////////
-PhysicsList::PhysicsList(G4String& parWorldName):G4VModularPhysicsList(),pWorldName(parWorldName)
+PhysicsList::PhysicsList():G4VModularPhysicsList()
 {
   G4LossTableManager::Instance();
   defaultCutValue = 1.0*mm;
@@ -136,10 +136,6 @@ void PhysicsList::ConstructProcess()
   //
   AddTransportation();
 
-  // parallel world
-  //
-  //AddParallelWorldProcess();
-
   // electromagnetic physics list
   //
   emPhysicsList->ConstructProcess();
@@ -165,29 +161,6 @@ void PhysicsList::ConstructProcess()
   emConfig->SetExtraEmModel("proton", "msc", _mscModel, "noMCS_region");*/
 
 }
-/////////////////////////////////////////////////////////////////////////////
-void PhysicsList::AddParallelWorldProcess() {
-  // Add parallel world process
-  G4ParallelWorldProcess* theParallelWorldProcess = new G4ParallelWorldProcess("paraWorldProc");
-  theParallelWorldProcess->SetParallelWorld(pWorldName);
-  theParallelWorldProcess->SetLayeredMaterialFlag();
-  GetParticleIterator()->reset();
-
-  while ( (*GetParticleIterator())() ) {
-    G4ParticleDefinition* particle = GetParticleIterator()->value();
-    if ( !particle->IsShortLived() ) {
-      G4ProcessManager* pmanager = particle->GetProcessManager();
-      pmanager->AddProcess(theParallelWorldProcess);
-      if ( theParallelWorldProcess->IsAtRestRequired(particle) ) { pmanager->SetProcessOrdering(theParallelWorldProcess,idxAtRest,9999); }
-      pmanager->SetProcessOrdering(theParallelWorldProcess,idxAlongStep,1);
-      pmanager->SetProcessOrdering(theParallelWorldProcess,idxPostStep,9999);
-
-    }
-  }
-}
-/////////////////////////////////////////////////////////////////////////////
-
-
 /////////////////////////////////////////////////////////////////////////////
 void PhysicsList::AddPhysicsList(const G4String& name)
 {

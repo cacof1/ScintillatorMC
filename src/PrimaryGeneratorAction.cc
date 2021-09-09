@@ -30,12 +30,17 @@ using namespace std;
 
 PrimaryGeneratorAction* PrimaryGeneratorAction::theGenerator = NULL;
 
-PrimaryGeneratorAction::PrimaryGeneratorAction(G4double energy, G4int ANumber, G4int Nprot, G4int NPencilBeam, G4double sigmaZ, G4double sigmaY):ENER(energy), A(ANumber), Nprotons(Nprot),NPB(NPencilBeam) 
+PrimaryGeneratorAction::PrimaryGeneratorAction()//G4double energy, G4int ANumber, G4int Nprot, G4int NPencilBeam, G4double sigmaZ, G4double sigmaY):ENER(energy), A(ANumber), Nprotons(Nprot),NPB(NPencilBeam) 
 { 
+  theConfig = pCTconfig::GetInstance();
+  NPBY = theConfig->item_int["NPB"];
+  NPBZ = theConfig->item_int["NPB"];
 
-  NPBY = NPB;
-  NPBZ = NPB;
+  A = theConfig->item_int["ANumber"];
+  Nprotons = theConfig->item_int["nProtons"];
+  ENER     = theConfig->item_float["Energy"];
   
+
   theGenerator = this;
   theDetector = DetectorConstruction::GetInstance();
   particleSource  = new G4GeneralParticleSource();
@@ -63,22 +68,22 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(G4double energy, G4int ANumber, G
   //Source 1
   //Position
 
-  PencilBeamStdY = sigmaY*mm;//6.393*mm;
-  PencilBeamStdZ = sigmaZ*mm;//6.5524*mm;
+  PencilBeamStdX = theConfig->item_float["sigmaX_pos"]*mm;//6.393*mm;
+  PencilBeamStdY = theConfig->item_float["sigmaY_pos"]*mm;//6.5524*mm;
   particleSource->SetCurrentSourceIntensity(0.75);
   posDist = particleSource->GetCurrentSource()->GetPosDist();
   posDist->SetPosRot1(G4ThreeVector(0,0,1));
   posDist->SetPosDisType("Beam");
   posDist->SetPosDisShape("Circle");
-  posDist->SetBeamSigmaInX(PencilBeamStdY);
-  posDist->SetBeamSigmaInY(PencilBeamStdZ);  
+  posDist->SetBeamSigmaInX(PencilBeamStdX);
+  posDist->SetBeamSigmaInY(PencilBeamStdY);  
 
   //Angular Specturm
-  PencilBeamStdAng = 25;
+  PencilBeamStdAng = 25; // mRad
   angDist = particleSource->GetCurrentSource()->GetAngDist();
   angDist->SetParticleMomentumDirection(G4ThreeVector(1,0,0));
-  angDist->SetBeamSigmaInAngX(PencilBeamStdAng);
-  angDist->SetBeamSigmaInAngY(PencilBeamStdAng);  
+  angDist->SetBeamSigmaInAngX(theConfig->item_float["sigma_AngX"]);
+  angDist->SetBeamSigmaInAngY(theConfig->item_float["sigma_AngY"]);  
   angDist->SetMinTheta(0.0);
   angDist->SetMaxTheta(1.0);
 
@@ -90,21 +95,21 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(G4double energy, G4int ANumber, G
   //Position
 
   particleSource->AddaSource(0.25);
-  PencilBeamStdY = 2*sigmaY*mm;//12.8434*mm;
-  PencilBeamStdZ = 2*sigmaZ*mm;//13.0028*mm;
+  PencilBeamStdX = 2*theConfig->item_float["sigmaX_pos"]*mm;//12.8434*mm;
+  PencilBeamStdY = 2*theConfig->item_float["sigmaY_pos"]*mm;//13.0028*mm;
   posDist = particleSource->GetCurrentSource()->GetPosDist();
   posDist->SetPosRot1(G4ThreeVector(0,0,1));
   posDist->SetPosDisType("Beam");
   posDist->SetPosDisShape("Circle");
-  posDist->SetBeamSigmaInX(PencilBeamStdY);
-  posDist->SetBeamSigmaInY(PencilBeamStdZ);  
+  posDist->SetBeamSigmaInX(PencilBeamStdX);
+  posDist->SetBeamSigmaInY(PencilBeamStdY);  
   
   //Angular Specturm
   PencilBeamStdAng = 25;
   angDist = particleSource->GetCurrentSource()->GetAngDist();
   angDist->SetParticleMomentumDirection(G4ThreeVector(1,0,0));
-  angDist->SetBeamSigmaInAngY(PencilBeamStdAng);
-  angDist->SetBeamSigmaInAngX(PencilBeamStdAng);  
+  angDist->SetBeamSigmaInAngX(theConfig->item_float["sigma_AngX"]);
+  angDist->SetBeamSigmaInAngY(theConfig->item_float["sigma_AngY"]);    
   angDist->SetMinTheta(0.0);
   angDist->SetMaxTheta(1.0);
   
@@ -113,7 +118,8 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(G4double energy, G4int ANumber, G
   
   //Pencil beam parameters
   nProtonsGenerated  = 0;
-  nProtonsToGenerate = Nprotons*NPBY*NPBZ; 
+  nProtonsToGenerate = Nprotons*NPBY*NPBZ;
+
   fieldSizeY = 2*(theDetector->ScintHalfY);
   fieldSizeZ = 2*(theDetector->ScintHalfZ);    
   if(NPB==1){ // For the calibration

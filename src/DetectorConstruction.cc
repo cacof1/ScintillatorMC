@@ -37,20 +37,20 @@ DetectorConstruction::~DetectorConstruction()
   delete theDetector;
 }
 
-DetectorConstruction::DetectorConstruction(G4String theModel,G4double angle,G4double thick, G4String CTFileName)
+DetectorConstruction::DetectorConstruction()//G4String theModel,G4double angle,G4double thick, G4String CTFileName)
 : G4VUserDetectorConstruction()
 { 
-  theCTFileName = CTFileName;
-  theThickness = thick;
-  theAngle    = angle;
-  theDetector = this;
-  thePhantom  = theModel;
-
+  theConfig = pCTconfig::GetInstance();
+  theCTFileName = theConfig->item_str["CT"];
+  theThickness  = theConfig->item_float["Thickness"];
+  theAngle      = theConfig->item_float["Angle"];
+  theDetector   = this;
+  thePhantom    = theConfig->item_str["Model"];
   theMaterial = OrganicMaterial::GetInstance();
+
   if(thePhantom=="XCAT"){
     TFile *f  = new TFile(theCTFileName,"update");
     hu        = (TH3S*)f->Get("hu");
-    
     NbinsX =  hu->GetNbinsX();
     NbinsY =  hu->GetNbinsY();
     NbinsZ =  hu->GetNbinsZ();
@@ -66,7 +66,6 @@ DetectorConstruction::DetectorConstruction(G4String theModel,G4double angle,G4do
     VoxelHalfX    =  hu->GetXaxis()->GetBinWidth(1)/2.*cm;
     VoxelHalfY    =  hu->GetYaxis()->GetBinWidth(1)/2.*cm;
     VoxelHalfZ    =  hu->GetZaxis()->GetBinWidth(1)/2.*cm;
-
     PhantomHalfX  =  NbinsX*VoxelHalfX;
     PhantomHalfY  =  NbinsY*VoxelHalfY;
     PhantomHalfZ  =  NbinsZ*VoxelHalfZ;
@@ -77,7 +76,7 @@ DetectorConstruction::DetectorConstruction(G4String theModel,G4double angle,G4do
     cout<<"NbinsY - Ymax - Ymin - BinSizeY/2 :"<<NbinsY<<" "<<Ymax<<" "<<Ymin<<" "<<PhantomHalfY<<endl;
     cout<<"NbinsZ - Zmax - Zmin - BinSizeZ/2 :"<<NbinsZ<<" "<<Zmax<<" "<<Zmin<<" "<<PhantomHalfZ<<endl;
   }
-  
+
   else{
     midX = midY = midZ = 0;
     PhantomHalfX     = theThickness/2.*cm;
@@ -90,6 +89,7 @@ DetectorConstruction::DetectorConstruction(G4String theModel,G4double angle,G4do
   ScintPosX       = midX + PhantomHalfX + ScintHalfX + 2*mm; // in the middle
   ScintPosY       = midY; // in the middle
   ScintPosZ       = midZ; // in the middle
+  
   G4double cut    = 1.*mm;
   fCuts   = new G4ProductionCuts();
   fCuts->SetProductionCut(cut);
@@ -1780,7 +1780,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 					,"LungInflated","Oesophagus","Cartilage","Stomach", "Pancreas","Spleen","Ribs2and6","CorticalBone",
 					"vertebral_column_C4_ICRU_report_46", "red_marrow_Woodard_1986","Blood",
 					"UrinaryBladder","Gland_mean_Z_Woodard_1986","SmallIntestine","SmallIntestine","Gland_mean_Z_Woodard_1986","Heart",
-					"Cartilage","Lymph","Uterus","Thyroid","Eyes"};
+					"Cartilage","Lymph","Uterus","Thyroid","SoftTissue"};
   
     vector<G4float> Threshold = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29};
     

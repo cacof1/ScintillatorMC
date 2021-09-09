@@ -1,6 +1,6 @@
 #ifndef PrimaryGeneratorAction_h
 #define PrimaryGeneratorAction_h 1
-
+#include "pCTconfig.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "globals.hh"
@@ -23,7 +23,7 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
   public:
 
-  PrimaryGeneratorAction(G4double,G4int, G4int, G4int, G4double, G4double);
+  PrimaryGeneratorAction();//G4double,G4int, G4int, G4int, G4double, G4double);
   ~PrimaryGeneratorAction();
   G4double ENER, ESPR, ANGU_X, ANGU_Y, CORR_X, CORR_Y, SPOT_CX, SPOT_CY, SPOT_CZ, SPOT_X, SPOT_Y, SPOT_Z, RAD;
 
@@ -38,6 +38,8 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
   void GeneratePrimaries(G4Event* );
   static G4String GetPrimaryName() ;                
   static inline PrimaryGeneratorAction* GetInstance() { return theGenerator; }
+
+  pCTconfig* theConfig;
 
   Float_t x0,y0,z0,px0,py0,pz0;
   Float_t x1,y1,z1,px1,py1,pz1;
@@ -57,9 +59,9 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
   //Pencil beam parameters
   Int_t PencilBeamIdY, PencilBeamIdZ;
   Int_t idPBGlobal, idPBY, idPBZ, ProtonsPerPB;
-  vector<G4double> PencilBeamPosY;
   vector<G4double> PencilBeamPosZ;
-  Double_t PencilBeamStdY, PencilBeamStdZ, PencilBeamStdAng;
+  vector<G4double> PencilBeamPosY;
+  Double_t PencilBeamStdX, PencilBeamStdY, PencilBeamStdZ, PencilBeamStdAng;
 
   G4SPSEneDistribution* eneDist;
   G4SPSPosDistribution* posDist;

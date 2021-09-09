@@ -9,13 +9,13 @@ Prerequesite:
 - ROOT
 
 ## Main Code 
-An example command to run is
+The code is ran through a config file. An example command to run is
 
 ```shell script
-./bin/Linux-g++/ScintillatorMC NParticle Energy Model Angle Thickness Thread ANumber NPB sigmaY sigmaZ
+./bin/Linux-g++/ScintillatorMC pCTconfig.txt
 ```
 
-The variables respectively mean:
+The variables required in pCTconfig.txt are predefined, and they respectively mean:
 
 - **NParticle**: The number of particle	per pencil beam	in the simulation
 - **Energy**   : The energy of each particle. In the src/PrimaryGeneratorAction.cc, it can be changed between Mono and Spectrum	(for the latter this argument is not used).
@@ -26,24 +26,22 @@ The variables respectively mean:
 - **ANumber**  : Atomic	mass of	the incoming particle (1 for proton, 4 for helium, etc..)
 - **NPB**      : Number	of pencil beam in either direction, it will be squared to find the total number	of pencil beam.
 - **sigmaY**   : Standard deviation of the pencil beam in the Y direction - [mm] (Reference 6.393 mm)
-- **sigmaZ**   : Standard deviation of the pencil beam in the Y direction - [mm] (Reference 6.5524 mm)
+- **sigmaX**   : Standard deviation of the pencil beam in the X direction - [mm] (Reference 6.5524 mm)
+- **sigma_AngX**   : Divergence of the pencil beam in the X direction - [mRad] (Reference 25 mRad)
+- **sigma_AngY**   : Divergence of the pencil beam in the Y direction - [mRad] (Reference 25 mRad)
 
 
 where you replace every variable by what you wishes (e.g. replace Energy by 200).
-Except if you are using an XCAT phantom, where you run with
-```shell script
-./bin/Linux-g++/ScintillatorMC NParticle Energy XCAT Angle Thickness Thread ANumber NPB sigmaY sigmaZ LungPhantom/choose_a_phase.root
-```
+Except if you are using an XCAT phantom, where you need to add the CT line to define which phase to use (please refer to pCTconfig.txt for more details)
 
 ## Calibration
 
 To perform a calibration scan, you need	to input a single pencil beam with the Empty phantom.
 
 ```shell script
-./bin/Linux-g++/ScintillatorMC NParticle Energy Empty Angle Thickness Thread ANumber 1 sigmaY sigmaZ
+./bin/Linux-g++/ScintillatorMC pCT_config_calibration.txt
 ```
 where the NPB=1 variable will position the single pencil beam in the middle of the phantom.
-
 
 ## Analysis
 
