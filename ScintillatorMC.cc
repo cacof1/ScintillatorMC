@@ -20,7 +20,8 @@
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
 #include "G4UImanager.hh"
-
+#include <stdlib.h>
+#include <time.h>
 #ifdef VIS
 #include "G4VisExecutive.hh"
 
@@ -33,7 +34,7 @@ void calcRSP(PrimaryGeneratorAction *);
 void calcStoppingPower(PrimaryGeneratorAction *, DetectorConstruction*);
 int main(int ,char** argv) {
   gROOT->ProcessLine("#include <vector>");
-
+  srand (time(NULL));
   const string configFile = argv[1];//"pCT_config.txt";
   pCTconfig cfg(configFile); // Create a class instance for parsing the configuration file             
 
@@ -52,7 +53,8 @@ int main(int ,char** argv) {
   G4float Thickness  = 30; // cm
   cfg.addItem("Thickness", Thickness);   
 
-  G4int   thread  = 0; // []
+  G4int   thread  = rand(); // []
+  cout<<thread<<endl;
   cfg.addItem("thread", thread);   
 
   G4int  ANumber  = 1; // Atomic Number
