@@ -1,7 +1,7 @@
 import os
 from random import seed
 from random import randint
-for i in range(0,10):
+for i in range(0,100):
     seed = randint(0,1000000)
     f = open('command.sh','w')
     f.write('#!/bin/bash -l \n')
