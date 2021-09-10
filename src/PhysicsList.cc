@@ -85,13 +85,13 @@ PhysicsList::PhysicsList():G4VModularPhysicsList()
   //AddPhysicsList("binary_ion");
   //AddPhysicsList("elastic");
   //AddPhysicsList("qmd_ion_ion_inelastic");
-  G4EmParameters* param = G4EmParameters::Instance();
+  /*G4EmParameters* param = G4EmParameters::Instance();
   param->SetDefaults();
   param->SetVerbose(1);
   param->SetMinEnergy(100*eV);
   param->SetMaxEnergy(10*GeV);
   param->SetBuildCSDARange(true);
-  param->SetMaxEnergyForCSDARange(10*GeV);
+  param->SetMaxEnergyForCSDARange(10*GeV);*/
   //param->SetMscRangeFactor(0.06);
   //SetPhysicsType(bElectromagnetic);
   
@@ -152,7 +152,7 @@ void PhysicsList::ConstructProcess()
 
   // step limitation (as a full process)
   //
-  AddStepMax();
+  //AddStepMax();
   
   //No MCS Region  
   /*G4EmConfigurator* emConfig = G4LossTableManager::Instance()->EmConfigurator();
@@ -256,7 +256,7 @@ void PhysicsList::AddPhysicsList(const G4String& name)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void PhysicsList::AddStepMax()
+/*void PhysicsList::AddStepMax()
 {
   // Step limitation seen as a process
   stepMaxProcess = new HadrontherapyStepMax();
@@ -271,7 +271,7 @@ void PhysicsList::AddStepMax()
 	pmanager->AddDiscreteProcess(stepLimiter);
       }
   }
-}
+  }*/
 
 /////////////////////////////////////////////////////////////////////////////
 void PhysicsList::SetCuts()

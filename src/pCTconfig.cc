@@ -59,9 +59,11 @@ void pCTconfig::SetStageThreshold(int stage, float value){
 int pCTconfig::Configure() { // Read the config file and try to match keys with those in the list that has been built with addItem.
   Util U;
   string line;
+
   ifstream infile(configFileName);
   int linecount = 0;
   cout << "pCTconfig::Configure: setting option defaults from file " << configFileName << ":" << endl;
+  cout<<infile<<endl;
   if (infile) {
     while (getline(infile, line)) {
       if (line == "") continue; // Skip blank lines
@@ -71,6 +73,7 @@ int pCTconfig::Configure() { // Read the config file and try to match keys with 
       string key;
       string value;
       U.getKeyValue(line, key, value);
+      cout<<key<<" "<<value<<endl;
       for(long unsigned int i = 0; i < itemList.size(); ++i) {
 	if(key.compare(itemList[i].key) == 0 || key.compare(itemList[i].longKey) == 0) {
 	  if (itemList[i].type == "STRING") {
