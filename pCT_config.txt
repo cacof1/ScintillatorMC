@@ -3,11 +3,11 @@
 #Spaces are optional, but the = sign is required
 #key = value lines can also include comments after the value(space required)
 #Blank lines are not allowed, at least for now(will cause a crash)
-nProtons   = 1 # Number of particles per pencil beam
-Energy     =  200 # Energy of the proton beam
+nProtons   = 1000 # Number of particles per pencil beam
+Energy     = 150 # Energy of the proton beam
 Model      = XCAT ## Model of the phantom to simulate
 CTPath     = /home/cacfek/ScintillatorMC/LungPhantom/Lung_1.root ## When using XCAT as model, this indicates which phase to use
-Angle      =  0 ## Angle of rotation for CT
+Angle      = 0 ## Angle of rotation for CT
 Thickness  = 30 ## Thickness of the simulation world to measure impact of tracker position. It will be overriden in the XCAT phantom to match the simulation world
 ANumber    = 1 ## Atomic number of particles to simulate
 NPB        = 100 ## Number of pencil beam in a single direction. Currently the pencil beam are staggered uniformly over the scintillator side (30cm) based on their number.
