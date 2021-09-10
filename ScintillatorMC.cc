@@ -21,7 +21,6 @@
 #include "G4PhysicalConstants.hh"
 #include "G4UImanager.hh"
 #include <stdlib.h>
-#include <time.h>
 #ifdef VIS
 #include "G4VisExecutive.hh"
 
@@ -34,10 +33,9 @@ void calcRSP(PrimaryGeneratorAction *);
 void calcStoppingPower(PrimaryGeneratorAction *, DetectorConstruction*);
 int main(int ,char** argv) {
   gROOT->ProcessLine("#include <vector>");
-  srand (time(NULL));
-  const string configFile = argv[1];//"pCT_config.txt";
-  pCTconfig cfg(configFile); // Create a class instance for parsing the configuration file             
-
+  const string configFile = G4String(argv[1]);
+  pCTconfig cfg(configFile.data()); // Create a class instance for parsing the configuration file             
+  cout<<"Config file "<<configFile<<endl; 
   G4int nProtons = 1000;
   cfg.addItem("nProtons", nProtons);
 
@@ -47,14 +45,16 @@ int main(int ,char** argv) {
   G4String Model  = "XCAT";       // []
   cfg.addItem("Model", Model);     
 
+  G4String CTPath     = "None";
+  cfg.addItem("CTPath", CTPath);   
+
   G4float Angle  = 0; // Degrees
   cfg.addItem("Angle", Angle);   
 
   G4float Thickness  = 30; // cm
   cfg.addItem("Thickness", Thickness);   
 
-  G4int   thread  = rand(); // []
-  cout<<thread<<endl;
+  G4int   thread  = atoi(argv[2]); // []
   cfg.addItem("thread", thread);   
 
   G4int  ANumber  = 1; // Atomic Number
@@ -75,8 +75,6 @@ int main(int ,char** argv) {
   G4float sigma_AngY = 25;// mRad
   cfg.addItem("sigma_AngY", sigma_AngY);  
 
-  G4String CT     = "";
-  cfg.addItem("CT", CT);   
 
   cfg.Configure();
   CLHEP::RanecuEngine *theRanGenerator = new CLHEP::RanecuEngine;  
