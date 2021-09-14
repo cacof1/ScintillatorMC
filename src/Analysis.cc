@@ -30,8 +30,7 @@ Analysis::Analysis()
   theAnalysis       = this;
   theGenerator      = PrimaryGeneratorAction::GetInstance();
   theDetector       = DetectorConstruction::GetInstance();
-  theConfig = pCTconfig::GetInstance();
-  cout<<theConfig->item_str["Model"]<<endl;
+  theConfig         = pCTconfig::GetInstance();
   f1 = new TFile(Form("%s_%.0f_%.1f_%d_%d.root",theConfig->item_str["Model"].data(),theGenerator->ENER,theConfig->item_float["angle"],theConfig->item_int["thread"],theGenerator->A),"recreate");
 
   NbinsX = 150; NbinsY = 150; NbinsZ = 150;
@@ -136,13 +135,18 @@ Analysis::Analysis()
 			     NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX);
     */
     PDD_Q.push_back(new TH1F(Form("PDD_Q_%d",i),Form("PDD_Q_%d",i),NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX));
-    ZXProj_Q.push_back(new TH2F(Form("ZXProj_Q_%d",i), Form("ZXProj_Q_%d",i), NbinsZ, -theDetector->ScintHalfZ, theDetector->ScintHalfZ,
-				NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX));
-    YXProj_Q.push_back(new TH2F(Form("YXProj_Q_%d",i), Form("YXProj_Q_%d",i), NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY,
-    NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX));
+    if(theConfig->item_int["saveZXProj"] == true){
+      ZXProj_Q.push_back(new TH2F(Form("ZXProj_Q_%d",i), Form("ZXProj_Q_%d",i), NbinsZ, -theDetector->ScintHalfZ, theDetector->ScintHalfZ,
+				  NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX));
+    }
+    if(theConfig->item_int["saveYXProj"] == true){    
+      YXProj_Q.push_back(new TH2F(Form("YXProj_Q_%d",i), Form("YXProj_Q_%d",i), NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY,
+				  NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX));
+    }
+    if(theConfig->item_int["saveYZProj"] == true){        
     YZProj_Q.push_back(new TH2F(Form("YZProj_Q_%d",i), Form("YZProj_Q_%d",i), NbinsY, -theDetector->ScintHalfY, theDetector->ScintHalfY,
 				NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX));
-
+    }
   }  
 }
 
@@ -222,9 +226,10 @@ void Analysis::FillScintillatorDose(G4Step* aStep)
 
     //Lateral/Distal projection beam by beam 2-D (light)
     PDD_Q[theGenerator->idPBGlobal]->Fill(x_scint,L); // Quenched    
-    YXProj_Q[theGenerator->idPBGlobal]->Fill(y_scint,x_scint,L);
-    ZXProj_Q[theGenerator->idPBGlobal]->Fill(z_scint,x_scint,L);
-    YZProj_Q[theGenerator->idPBGlobal]->Fill(z_scint,y_scint,L);    
+
+    if(theConfig->item_int["saveYXProj"] == true){ YXProj_Q[theGenerator->idPBGlobal]->Fill(y_scint,x_scint,L);}
+    if(theConfig->item_int["saveZXProj"] == true){ ZXProj_Q[theGenerator->idPBGlobal]->Fill(z_scint,x_scint,L);}
+    if(theConfig->item_int["saveYZProj"] == true){ YZProj_Q[theGenerator->idPBGlobal]->Fill(z_scint,y_scint,L);}
     //Cumulative Projections
     /*
     XYProj_Tot->Fill(x_scint,y_scint,Estop_scint);
@@ -262,11 +267,10 @@ void Analysis::Save(){
 
   // Full 3-D Histogram
 
-    Edep_Tot->Write("",TObject::kOverwrite);
-    Entries_Tot->Write("",TObject::kOverwrite);
-    LET_Tot->Write("",TObject::kOverwrite);
-    L_Tot->Write("",TObject::kOverwrite);
-
+  Edep_Tot->Write("",TObject::kOverwrite);
+  Entries_Tot->Write("",TObject::kOverwrite);
+  LET_Tot->Write("",TObject::kOverwrite);
+  L_Tot->Write("",TObject::kOverwrite);
 
   /*
   // Integrated 2-D projection
@@ -315,24 +319,28 @@ void Analysis::Save(){
   f1->cd();  
   
   //2-D Projection Pencil Beam By Pencil Beam (Quenched Light)
+  if(theConfig->item_int["saveZXProj"] == true){
   f1->mkdir("ZXProj_Q");
   f1->cd("ZXProj_Q");
   for(int i =0;i<theGenerator->NPBY*theGenerator->NPBZ;i++) ZXProj_Q[i]->Write("",TObject::kOverwrite);
   f1->cd();
-  // 2-D Projection Pencil Beam By Pencil Beam (Quenched Light)
+  }
 
+  // 2-D Projection Pencil Beam By Pencil Beam (Quenched Light)
+  if(theConfig->item_int["saveYZProj"] == true){
   f1->mkdir("YZProj_Q");
   f1->cd("YZProj_Q");
   for(int i =0;i<theGenerator->NPBY*theGenerator->NPBZ;i++) YZProj_Q[i]->Write("",TObject::kOverwrite);
   f1->cd();
-
+  }
   
   // 2-D Projection Pencil Beam By Pencil Beam (Quenched Light)
+  if(theConfig->item_int["saveYXProj"] == true){
   f1->mkdir("YXProj_Q");
   f1->cd("YXProj_Q");
   for(int i =0;i<theGenerator->NPBY*theGenerator->NPBZ;i++) YXProj_Q[i]->Write("",TObject::kOverwrite);
   f1->cd();
-  
+  }
   // 3-D histogram Pencil Beam By Pencil Beam -- Sparse
   /*
   t2 = new TTree("PencilBeam","PB");
@@ -370,12 +378,28 @@ void Analysis::Save(){
   t3->Write("",TObject::kOverwrite);
 
   // Header containing relevant info
-  int NGlobal = theGenerator->NPBY*theGenerator->NPBZ;
   TTree* t4 = new TTree("Header","");
-  t4->Branch("NPB",&NGlobal,"NPB/I"); // Pencil Beam ID
-  t4->Branch("PB_Sigma_Z",&theGenerator->PencilBeamStdZ,"PB_Sigma_Z/D"); // Pencil Beam ID   
-  t4->Branch("PB_Sigma_Y",&theGenerator->PencilBeamStdY,"PB_Sigma_Y/D"); // Pencil Beam ID
-  t4->Branch("PB_Sigma_Ang",&theGenerator->PencilBeamStdAng,"PB_Sigma_Ang/D"); // Pencil Beam ID  
+  t4->Branch("NPB",&theConfig->item_int["NPB"],"NPB/I"); // Pencil Beam ID
+  t4->Branch("NProtons",&theConfig->item_int["NProtons"],"NProtons/I"); // Pencil Beam ID
+  t4->Branch("Energy",&theConfig->item_float["Energy"],"Energy/F"); // Pencil Beam ID  
+  t4->Branch("Thickness",&theConfig->item_float["Thickness"],"Thickness/I"); // Pencil Beam ID
+  t4->Branch("ANumber",&theConfig->item_int["ANumber"],"ANumber/I"); // Pencil Beam ID  
+  t4->Branch("Angle",&theConfig->item_float["Angle"],"Angle/I"); // Pencil Beam ID  
+  t4->Branch("sigmaX_pos",&theConfig->item_float["sigmaX_pos"],"sigmaX_pos/F"); // Pencil Beam ID
+  t4->Branch("sigmaY_pos",&theConfig->item_float["sigmaY_pos"],"sigmaY_pos/F"); // Pencil Beam ID
+  t4->Branch("fieldSizeY",&theConfig->item_float["fieldSizeY"],"fieldSizeY/F"); // Pencil Beam ID
+  t4->Branch("fieldSizeZ",&theConfig->item_float["fieldSizeZ"],"fieldSizeZ/F"); // Pencil Beam ID  
+  t4->Branch("sigma_AngX",&theConfig->item_float["sigma_AngX"],"sigma_AngX/F"); // Pencil Beam ID
+  t4->Branch("sigma_AngY",&theConfig->item_float["sigma_AngY"],"sigma_AngY/F"); // Pencil Beam ID
+  t4->Branch("centerY",&theConfig->item_float["centerY"],"centerY/F"); // Pencil Beam ID
+  t4->Branch("centerZ",&theConfig->item_float["centerZ"],"centerZ/F"); // Pencil Beam ID  
+
+
+
+  //Strings
+  t4->Branch("Model",&theConfig->item_str["Model"]); // Pencil Beam ID
+  t4->Branch("Phase",&theConfig->item_str["CTPath"]); // Pencil Beam ID  
+
   t4->Fill();
   t4->Write("",TObject::kOverwrite);     
   f1->Close();

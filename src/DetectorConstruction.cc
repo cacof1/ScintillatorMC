@@ -42,7 +42,6 @@ DetectorConstruction::DetectorConstruction()//G4String theModel,G4double angle,G
 { 
   theConfig = pCTconfig::GetInstance();
   theCTFileName = theConfig->item_str["CTPath"];
-  cout<<"CT File Name "<<theCTFileName<<endl;
   theThickness  = theConfig->item_float["Thickness"];
   theAngle      = theConfig->item_float["Angle"];
   theDetector   = this;

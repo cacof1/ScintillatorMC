@@ -73,9 +73,29 @@ int main(int ,char** argv) {
   cfg.addItem("sigma_AngX", sigma_AngX);
   
   G4float sigma_AngY = 25;// mRad
-  cfg.addItem("sigma_AngY", sigma_AngY);  
+  cfg.addItem("sigma_AngY", sigma_AngY);
 
+  G4float fieldSizeY = 300;// mm
+  cfg.addItem("fieldSizeY", fieldSizeY);
 
+  G4float centerY = 0;// mm
+  cfg.addItem("centerY", centerY);  
+
+  G4float fieldSizeZ = 300;// mm
+  cfg.addItem("fieldSizeZ", fieldSizeZ);      
+
+  G4float centerZ = 0;// mm
+  cfg.addItem("centerZ", centerZ);      
+
+  G4int saveYXProj = 0; // []
+  cfg.addItem("saveYXProj", saveYXProj);
+
+  G4int saveYZProj = 0; // []
+  cfg.addItem("saveYZProj", saveYZProj);
+
+  G4int saveZXProj = 0; // []
+  cfg.addItem("saveZXProj", saveZXProj);  
+  
   cfg.Configure();
   CLHEP::RanecuEngine *theRanGenerator = new CLHEP::RanecuEngine;  
   theRanGenerator->setSeed(thread);

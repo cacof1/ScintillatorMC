@@ -17,7 +17,7 @@ NX, NY = hist.shape
 NPB = 0
 tree = f.Get("Header")
 for event in tree: NPB = event.NPB
-"""
+
 ###
 
 ###
@@ -28,6 +28,7 @@ for i in range(0,NPB):
     A += Edep
 A = np.flipud(A)
 plt.imshow(A,cmap='gray_r')
+plt.title(sys.argv[1])
 plt.show()
 """
 hist2 = f.Get("Front")
@@ -35,3 +36,4 @@ hist2 = hist2array(hist2)
 hist2 = np.rot90(hist2)
 plt.imshow(hist2,cmap='gray')
 plt.show()
+"""

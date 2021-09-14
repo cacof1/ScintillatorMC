@@ -120,17 +120,18 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()//G4double energy, G4int ANumber
   nProtonsGenerated  = 0;
   nProtonsToGenerate = Nprotons*NPBY*NPBZ;
 
-  fieldSizeY = 2*(theDetector->ScintHalfY);
-  fieldSizeZ = 2*(theDetector->ScintHalfZ);    
-  if(NPB==1){ // For the calibration
+  fieldSizeY = theConfig->item_float["fieldSizeY"]; //2*(theDetector->ScintHalfY);//300 mm
+  fieldSizeZ = theConfig->item_float["fieldSizeZ"]; //2*(theDetector->ScintHalfZ);//300 mm
+  
+  if(theConfig->item_int["NPB"]==1){ // For the calibration
     PencilBeamPosY.push_back(0);
     PencilBeamPosZ.push_back(0);
   }
   else{
-    PencilBeamPosY = linspace(-fieldSizeY/2, fieldSizeY/2, NPBY); // mm
-    PencilBeamPosZ = linspace(-fieldSizeZ/2, fieldSizeZ/2, NPBZ); // mm
+    PencilBeamPosY = linspace(-fieldSizeY/2 + theConfig->item_float["centerY"], fieldSizeY/2 + theConfig->item_float["centerY"], NPBY); // mm
+    PencilBeamPosZ = linspace(-fieldSizeZ/2 + theConfig->item_float["centerZ"], fieldSizeZ/2 + theConfig->item_float["centerZ"], NPBZ); // mm
   }
-
+  for(int i =0; i<NPBY; i++){ cout<<PencilBeamPosY[i]<<endl;}
 }
   
 PrimaryGeneratorAction::~PrimaryGeneratorAction()
