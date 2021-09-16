@@ -73,7 +73,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()//G4double energy, G4int ANumber
   particleSource->SetCurrentSourceIntensity(0.75);
   posDist = particleSource->GetCurrentSource()->GetPosDist();
   posDist->SetPosRot1(G4ThreeVector(0,0,1));
-  posDist->SetPosDisType("Beam");
+  posDist->SetPosDisType(theConfig->item_str["SourceType"]);
   posDist->SetPosDisShape("Circle");
   posDist->SetBeamSigmaInX(PencilBeamStdX);
   posDist->SetBeamSigmaInY(PencilBeamStdY);  
@@ -99,7 +99,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()//G4double energy, G4int ANumber
   PencilBeamStdY = 2*theConfig->item_float["sigmaY_pos"]*mm;//13.0028*mm;
   posDist = particleSource->GetCurrentSource()->GetPosDist();
   posDist->SetPosRot1(G4ThreeVector(0,0,1));
-  posDist->SetPosDisType("Beam");
+  posDist->SetPosDisType(theConfig->item_str["SourceType"]);  
   posDist->SetPosDisShape("Circle");
   posDist->SetBeamSigmaInX(PencilBeamStdX);
   posDist->SetBeamSigmaInY(PencilBeamStdY);  

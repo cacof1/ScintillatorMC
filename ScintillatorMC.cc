@@ -36,6 +36,7 @@ int main(int ,char** argv) {
   const string configFile = G4String(argv[1]);
   pCTconfig cfg(configFile.data()); // Create a class instance for parsing the configuration file             
   cout<<"Config file "<<configFile<<endl; 
+
   G4int nProtons = 1000;
   cfg.addItem("nProtons", nProtons);
 
@@ -95,6 +96,13 @@ int main(int ,char** argv) {
 
   G4int saveZXProj = 0; // []
   cfg.addItem("saveZXProj", saveZXProj);  
+
+  G4int particleCount = 0; // []
+  cfg.addItem("particleCount", particleCount);  
+
+  G4String SourceType  = "Beam";       // []
+  cfg.addItem("SourceType", SourceType);     
+
   
   cfg.Configure();
   CLHEP::RanecuEngine *theRanGenerator = new CLHEP::RanecuEngine;  

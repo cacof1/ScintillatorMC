@@ -63,7 +63,6 @@ int pCTconfig::Configure() { // Read the config file and try to match keys with 
   ifstream infile(configFileName);
   int linecount = 0;
   cout << "pCTconfig::Configure: setting option defaults from file " << configFileName << ":" << endl;
-  cout<<infile<<endl;
   if (infile) {
     while (getline(infile, line)) {
       if (line == "") continue; // Skip blank lines

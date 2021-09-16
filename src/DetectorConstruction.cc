@@ -213,6 +213,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   }
 
   //----------------------------------------------------------------------------------------------------------------
+  // Water box phantom
+  //----------------------------------------------------------------------------------------------------------------
+  else if(thePhantom == "WaterBox"){
+    G4VisAttributes* linepair_att  = new G4VisAttributes(G4Colour(0,0,1));
+    linepair_att->SetVisibility(true);
+    linepair_att->SetForceSolid(true);
+    G4Box* WaterBox  = new G4Box("WaterBox", 15/2*cm, 30/2*cm, 30/2*cm);
+    G4LogicalVolume* WaterBox_log = new G4LogicalVolume(WaterBox, water, "WaterBox_log");
+    new G4PVPlacement(rotExt,G4ThreeVector(0,0,0),"WaterBox_phys",WaterBox_log,cont_phys,false,0);
+  }  
+
+  //----------------------------------------------------------------------------------------------------------------
   // Gammex phantom
   //----------------------------------------------------------------------------------------------------------------
 

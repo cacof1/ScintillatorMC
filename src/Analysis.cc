@@ -205,31 +205,30 @@ void Analysis::FillScintillatorDose(G4Step* aStep)
     L    = dX*A*LET/(1+ kB*LET);
 
     // For particles count
-    /*
-    if(aStep->GetTrack()->GetTrackStatus() == fStopAndKill){ // End of Track
-      if(aStep->GetTrack()->GetCreatorProcess()==0){ // Primary Particle
-	// For the pencil beams  
-	//PDD[theGenerator->idPBGlobal]->Fill(x_scint,1); // -- Non Quenched
-	//Distal projection beam by beam
-	//YXProj[theGenerator->idPBGlobal]->Fill(y_scint,x_scint,1);
-	//ZXProj[theGenerator->idPBGlobal]->Fill(z_scint,x_scint,1);
-	//YZProj[theGenerator->idPBGlobal]->Fill(z_scint,x_scint,1);	
+    if(theConfig->item_int["particleCount"] == true){
+      if(aStep->GetTrack()->GetTrackStatus() == fStopAndKill){ // End of Track
+	if(aStep->GetTrack()->GetCreatorProcess()==0){ // Primary Particle
+	  PDD_Q[theGenerator->idPBGlobal]->Fill(x_scint,1); // -- Non Quenched
+	  //Distal projection beam by beam
+	  YXProj_Q[theGenerator->idPBGlobal]->Fill(y_scint,x_scint,1);
+	  ZXProj_Q[theGenerator->idPBGlobal]->Fill(z_scint,x_scint,1);
+	  YZProj_Q[theGenerator->idPBGlobal]->Fill(z_scint,x_scint,1);	
 	}
       }
-    */
-    
+    }
+    else{
+      //Lateral/Distal projection beam by beam 2-D (light)
+      PDD_Q[theGenerator->idPBGlobal]->Fill(x_scint,L); // Quenched    
+      if(theConfig->item_int["saveYXProj"] == true){ YXProj_Q[theGenerator->idPBGlobal]->Fill(y_scint,x_scint,L);}
+      if(theConfig->item_int["saveZXProj"] == true){ ZXProj_Q[theGenerator->idPBGlobal]->Fill(z_scint,x_scint,L);}
+      if(theConfig->item_int["saveYZProj"] == true){ YZProj_Q[theGenerator->idPBGlobal]->Fill(z_scint,y_scint,L);}
+    }
     //Lateral/Distal projection beam by beam 2-D (energy)
     //PDD[theGenerator->idPBGlobal]->Fill(x_scint,Estop_scint); 
     //YXProj[theGenerator->idPBGlobal]->Fill(y_scint,x_scint,Estop_scint);
     //ZXProj[theGenerator->idPBGlobal]->Fill(z_scint,x_scint,Estop_scint);
     //YZProj[theGenerator->idPBGlobal]->Fill(z_scint,x_scint,Estop_scint);    
 
-    //Lateral/Distal projection beam by beam 2-D (light)
-    PDD_Q[theGenerator->idPBGlobal]->Fill(x_scint,L); // Quenched    
-
-    if(theConfig->item_int["saveYXProj"] == true){ YXProj_Q[theGenerator->idPBGlobal]->Fill(y_scint,x_scint,L);}
-    if(theConfig->item_int["saveZXProj"] == true){ ZXProj_Q[theGenerator->idPBGlobal]->Fill(z_scint,x_scint,L);}
-    if(theConfig->item_int["saveYZProj"] == true){ YZProj_Q[theGenerator->idPBGlobal]->Fill(z_scint,y_scint,L);}
     //Cumulative Projections
     /*
     XYProj_Tot->Fill(x_scint,y_scint,Estop_scint);
@@ -394,9 +393,8 @@ void Analysis::Save(){
   t4->Branch("centerY",&theConfig->item_float["centerY"],"centerY/F"); // Pencil Beam ID
   t4->Branch("centerZ",&theConfig->item_float["centerZ"],"centerZ/F"); // Pencil Beam ID  
 
-
-
   //Strings
+  t4->Branch("SourceType",&theConfig->item_str["SourceType"]); // Pencil Beam ID
   t4->Branch("Model",&theConfig->item_str["Model"]); // Pencil Beam ID
   t4->Branch("Phase",&theConfig->item_str["CTPath"]); // Pencil Beam ID  
 
