@@ -82,6 +82,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()//G4double energy, G4int ANumber
   PencilBeamStdAng = 25; // mRad
   angDist = particleSource->GetCurrentSource()->GetAngDist();
   angDist->SetParticleMomentumDirection(G4ThreeVector(1,0,0));
+  angDist->SetAngDistType("beam2d");
   angDist->SetBeamSigmaInAngX(theConfig->item_float["sigma_AngX"]);
   angDist->SetBeamSigmaInAngY(theConfig->item_float["sigma_AngY"]);  
   angDist->SetMinTheta(0.0);
@@ -108,6 +109,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()//G4double energy, G4int ANumber
   PencilBeamStdAng = 25;
   angDist = particleSource->GetCurrentSource()->GetAngDist();
   angDist->SetParticleMomentumDirection(G4ThreeVector(1,0,0));
+  angDist->SetAngDistType("beam2d");
   angDist->SetBeamSigmaInAngX(theConfig->item_float["sigma_AngX"]);
   angDist->SetBeamSigmaInAngY(theConfig->item_float["sigma_AngY"]);    
   angDist->SetMinTheta(0.0);
