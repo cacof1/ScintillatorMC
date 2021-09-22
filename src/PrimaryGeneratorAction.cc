@@ -133,7 +133,6 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()//G4double energy, G4int ANumber
     PencilBeamPosY = linspace(-fieldSizeY/2 + theConfig->item_float["centerY"], fieldSizeY/2 + theConfig->item_float["centerY"], NPBY); // mm
     PencilBeamPosZ = linspace(-fieldSizeZ/2 + theConfig->item_float["centerZ"], fieldSizeZ/2 + theConfig->item_float["centerZ"], NPBZ); // mm
   }
-  for(int i =0; i<NPBY; i++){ cout<<PencilBeamPosY[i]<<endl;}
 }
   
 PrimaryGeneratorAction::~PrimaryGeneratorAction()

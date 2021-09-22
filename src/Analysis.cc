@@ -33,7 +33,7 @@ Analysis::Analysis()
   theConfig         = pCTconfig::GetInstance();
   f1 = new TFile(Form("%s_%.0f_%.1f_%d_%d.root",theConfig->item_str["Model"].data(),theGenerator->ENER,theConfig->item_float["angle"],theConfig->item_int["thread"],theGenerator->A),"recreate");
 
-  NbinsX = 150; NbinsY = 150; NbinsZ = 150;
+  NbinsX = 300; NbinsY = 300; NbinsZ = 300;
 
   //Full histogram
   Edep_Tot    = new TH3F("Edep_Tot", "Edep_Tot", NbinsX, -theDetector->ScintHalfX, theDetector->ScintHalfX, 
@@ -196,6 +196,7 @@ void Analysis::FillScintillatorDose(G4Step* aStep)
     z_scint      = aStep->GetPostStepPoint()->GetPosition()[2];
     Estop_scint  = aStep->GetTotalEnergyDeposit();
     dX           = aStep->GetStepLength();
+
     if(aStep->GetStepLength()>0) LET = (aStep->GetTotalEnergyDeposit() - aStep->GetNonIonizingEnergyDeposit())/dX; 
     else LET = 0;
 
@@ -203,16 +204,15 @@ void Analysis::FillScintillatorDose(G4Step* aStep)
     A    = 1.0;
     kB   = 1.59E-2; // cm/MeV 
     L    = dX*A*LET/(1+ kB*LET);
-
     // For particles count
     if(theConfig->item_int["particleCount"] == true){
       if(aStep->GetTrack()->GetTrackStatus() == fStopAndKill){ // End of Track
 	if(aStep->GetTrack()->GetCreatorProcess()==0){ // Primary Particle
 	  PDD_Q[theGenerator->idPBGlobal]->Fill(x_scint,1); // -- Non Quenched
 	  //Distal projection beam by beam
-	  YXProj_Q[theGenerator->idPBGlobal]->Fill(y_scint,x_scint,1);
-	  ZXProj_Q[theGenerator->idPBGlobal]->Fill(z_scint,x_scint,1);
-	  YZProj_Q[theGenerator->idPBGlobal]->Fill(z_scint,x_scint,1);	
+	  if(theConfig->item_int["saveYXProj"] == true){ YXProj_Q[theGenerator->idPBGlobal]->Fill(y_scint,x_scint,1);}
+	  if(theConfig->item_int["saveZXProj"] == true){ ZXProj_Q[theGenerator->idPBGlobal]->Fill(z_scint,x_scint,1);}
+	  if(theConfig->item_int["saveYZProj"] == true){ YZProj_Q[theGenerator->idPBGlobal]->Fill(z_scint,y_scint,1);}
 	}
       }
     }
@@ -223,6 +223,7 @@ void Analysis::FillScintillatorDose(G4Step* aStep)
       if(theConfig->item_int["saveZXProj"] == true){ ZXProj_Q[theGenerator->idPBGlobal]->Fill(z_scint,x_scint,L);}
       if(theConfig->item_int["saveYZProj"] == true){ YZProj_Q[theGenerator->idPBGlobal]->Fill(z_scint,y_scint,L);}
     }
+
     //Lateral/Distal projection beam by beam 2-D (energy)
     //PDD[theGenerator->idPBGlobal]->Fill(x_scint,Estop_scint); 
     //YXProj[theGenerator->idPBGlobal]->Fill(y_scint,x_scint,Estop_scint);

@@ -3,14 +3,14 @@
 #Spaces are optional, but the = sign is required
 #key = value lines can also include comments after the value(space required)
 #Blank lines are not allowed, at least for now(will cause a crash)
-nProtons   = 100000 # Number of particles per pencil beam
-Energy     = 200 # Energy of the proton beam
+nProtons   = 10000 # Number of particles per pencil beam
+Energy     = 230 # Energy of the proton beam
 Model      = XCAT ## Model of the phantom to simulate
 CTPath     = LungPhantom/Lung_1.root ## When using XCAT as model, this indicates which phase to use
 Angle      = 0 ## Angle of rotation for CT
 Thickness  = 30 ## Thickness of the simulation world to measure impact of tracker position. It will be overriden in the XCAT phantom to match the simulation world
 ANumber    = 1 ## Atomic number of particles to simulate
-NPB        = 1 ## Number of pencil beam in a single direction. Total number of is NPB*NPB staggered uniformly over fieldSizeY and fieldSizeZ
+NPB        = 100 ## Number of pencil beam in a single direction. Total number of is NPB*NPB staggered uniformly over fieldSizeY and fieldSizeZ
 sigmaX_pos = 5 ## Standard deviation in X direction of the first gaussian in mm
 sigmaY_pos = 5 ## Standard deviation in Y direction of the first gaussian in mm
 sigma_AngX = 25 ## Divergence of the beam in mRad
@@ -20,7 +20,7 @@ fieldSizeZ = 300 ## size of the field of PB
 centerY    = 0  ## Central position of the uniform field of PB
 centerZ    = 0  ## Central position of the uniform field of PB
 saveYXProj = 1
-saveYZProj = 1
+saveYZProj = 0
 saveZXProj = 1
-particleCount = 1 ## To score energy (=0) or end of particle count (=1)
+particleCount = 0 ## To score energy (=0) or end of particle count (=1)
 SourceType = Beam ## Choose specifically Beam (Gaussian) or Plane (Uniform)
