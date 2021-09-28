@@ -12,17 +12,16 @@ Prerequesite:
 The code is ran through a config file. An example command to run is
 
 ```shell script
-./bin/Linux-g++/ScintillatorMC pCTconfig.txt
+./bin/Linux-g++/ScintillatorMC pCTconfig.txt $RANDOMNUMBER
 ```
 
-The variables required in pCTconfig.txt are predefined, and they respectively mean:
+where the variable $RANDOMNUMBER is to be replaced by a random number. The variables required in pCTconfig.txt are predefined, and they respectively mean:
 
 - **NParticle**: The number of particle	per pencil beam	in the simulation
 - **Energy**   : The energy of each particle. In the src/PrimaryGeneratorAction.cc, it can be changed between Mono and Spectrum	(for the latter this argument is not used).
 - **Model**    : Which phantom model to	use (right now we are using LasVegas and SlantedEdge, but a whole library exist)
 - **Angle**    : For tomographic reconstruction, the angle between the beam and	the phantom main axis
 - **Thickness**: Represents the	thickness of the world which should be greater than the	phantom	(used to investigate scattering artifact)
-- **Thread**   : Thread	number to append to the	output root file to distinguish	when running parallel job
 - **ANumber**  : Atomic	mass of	the incoming particle (1 for proton, 4 for helium, etc..)
 - **NPB**      : Number	of pencil beam in either direction, it will be squared to find the total number	of pencil beam.
 - **sigmaY**   : Standard deviation of the pencil beam in the Y direction - [mm] (Reference 6.393 mm)
@@ -39,9 +38,9 @@ Except if you are using an XCAT phantom, where you need to add the CT line to de
 To perform a calibration scan, you need	to input a single pencil beam with the Empty phantom.
 
 ```shell script
-./bin/Linux-g++/ScintillatorMC pCT_config_calibration.txt
+./bin/Linux-g++/ScintillatorMC pCT_config.txt $RANDOMNUMBER
 ```
-where the NPB=1 variable will position the single pencil beam in the middle of the phantom.
+where the variable NPB is set to 1, which will position the single pencil beam in the middle of the phantom.
 
 ## Analysis
 

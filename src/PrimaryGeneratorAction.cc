@@ -79,14 +79,11 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()//G4double energy, G4int ANumber
   posDist->SetBeamSigmaInY(PencilBeamStdY);  
 
   //Angular Specturm
-  PencilBeamStdAng = 25; // mRad
   angDist = particleSource->GetCurrentSource()->GetAngDist();
-  angDist->SetParticleMomentumDirection(G4ThreeVector(1,0,0));
   angDist->SetAngDistType("beam2d");
-  angDist->SetBeamSigmaInAngX(theConfig->item_float["sigma_AngX"]);
-  angDist->SetBeamSigmaInAngY(theConfig->item_float["sigma_AngY"]);  
-  angDist->SetMinTheta(0.0);
-  angDist->SetMaxTheta(1.0);
+  angDist->DefineAngRefAxes("angref1", G4ThreeVector(0,0,1));
+  angDist->SetBeamSigmaInAngX(theConfig->item_float["sigma_AngX"]/1000.);
+  angDist->SetBeamSigmaInAngY(theConfig->item_float["sigma_AngY"]/1000.);    // Rad -> mRad
 
   //Particle type
   particleSource->SetParticleDefinition(particle);
@@ -106,14 +103,11 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()//G4double energy, G4int ANumber
   posDist->SetBeamSigmaInY(PencilBeamStdY);  
   
   //Angular Specturm
-  PencilBeamStdAng = 25;
   angDist = particleSource->GetCurrentSource()->GetAngDist();
-  angDist->SetParticleMomentumDirection(G4ThreeVector(1,0,0));
   angDist->SetAngDistType("beam2d");
-  angDist->SetBeamSigmaInAngX(theConfig->item_float["sigma_AngX"]);
-  angDist->SetBeamSigmaInAngY(theConfig->item_float["sigma_AngY"]);    
-  angDist->SetMinTheta(0.0);
-  angDist->SetMaxTheta(1.0);
+  angDist->DefineAngRefAxes("angref1", G4ThreeVector(0,0,1));
+  angDist->SetBeamSigmaInAngX(theConfig->item_float["sigma_AngX"]/1000.);
+  angDist->SetBeamSigmaInAngY(theConfig->item_float["sigma_AngY"]/1000.);    // Rad -> mRad
   
   //Particle type
   particleSource->SetParticleDefinition(particle);

@@ -138,7 +138,7 @@ int main(int ,char** argv) {
   visManager->Initialize();
   //G4UImanager * UImanager = G4UImanager::GetUIpointer();
   G4cout << " UI session starts ..." << G4endl;
-  G4UIExecutive* ui = new G4UIExecutive(argc, argv);
+  G4UIExecutive* ui = new G4UIExecutive(2, argv);
   UImanager->ApplyCommand("/control/execute vis.mac");
   ui->SessionStart();
   #endif
