@@ -5,6 +5,9 @@
 #include "globals.hh"
 #include "OrganicMaterial.hh"
 #include "pCTconfig.hh"
+#include "SensitiveDetectorTracker.hh"
+#include "SensitiveDetectorScintillator.hh"
+
 class G4VPhysicalVolume;
 class G4LogicalVolume;
 class OrganicMaterial;

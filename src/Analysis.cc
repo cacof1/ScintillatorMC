@@ -86,31 +86,32 @@ Analysis::Analysis()
     dEdXBins.push_back(data[1]);
   }
 
-  //Phasespace
-  /*t = new TTree("phase","PS");
-  t->Branch("x0",&x0,"x0/F");
-  t->Branch("y0",&y0,"y0/F");
-  t->Branch("z0",&z0,"z0/F");
+  if(theConfig->item_int["saveTTree"] == true){ //Phasespace  
+    t = new TTree("phase","PS");
+    t->Branch("x0",&x0,"x0/F");
+    t->Branch("y0",&y0,"y0/F");
+    t->Branch("z0",&z0,"z0/F");
   
-  t->Branch("px0",&px0,"px0/F");
-  t->Branch("py0",&py0,"py0/F");
-  t->Branch("pz0",&pz0,"pz0/F");
-  t->Branch("Einit",&Einit,"Einit/F");
-
-  t->Branch("x1",&x1,"x1/F");
-  t->Branch("y1",&y1,"y1/F");
-  t->Branch("z1",&z1,"z1/F");
+    t->Branch("px0",&px0,"px0/F");
+    t->Branch("py0",&py0,"py0/F");
+    t->Branch("pz0",&pz0,"pz0/F");
+    t->Branch("Einit",&Einit,"Einit/F");
+    
+    t->Branch("x1",&x1,"x1/F");
+    t->Branch("y1",&y1,"y1/F");
+    t->Branch("z1",&z1,"z1/F");
+    
+    t->Branch("px1",&px1,"px1/F");
+    t->Branch("py1",&py1,"py1/F");
+    t->Branch("pz1",&pz1,"pz1/F");
+    t->Branch("Estop",&Estop,"Estop/F");
+    
+    t->Branch("proc_name",&proc_name);
+    t->Branch("part_name",&part_name);
+    t->Branch("idPBY",&idPBY,"idPBY/I");
+    t->Branch("idPBZ",&idPBZ,"idPBZ/I");
+  }
   
-  t->Branch("px1",&px1,"px1/F");
-  t->Branch("py1",&py1,"py1/F");
-  t->Branch("pz1",&pz1,"pz1/F");
-  t->Branch("Estop",&Estop,"Estop/F");
-
-  t->Branch("proc_name",&proc_name);
-  t->Branch("part_name",&part_name);
-  t->Branch("idPBY",&idPBY,"idPBY/I");
-  t->Branch("idPBZ",&idPBZ,"idPBZ/I");
-  */
   //Pencil beam by pencil beam event
   for(int i =0;i<theGenerator->NPBY*theGenerator->NPBZ;i++){
 
@@ -182,6 +183,7 @@ void Analysis::RearFrontDetector(G4Step* aStep, G4String theName){
       double WET = findWET(Einit, Estop);
       Front->Fill(y0,z0,WET);
       Back->Fill(y1,z1,WET);
+      if(theConfig->item_int["saveTTree"] == true) t->Fill();
     }
   }
 }
@@ -262,8 +264,10 @@ void Analysis::FillScintillatorDose(G4Step* aStep)
 void Analysis::Save(){
   cout<<"Recording"<<endl;
   f1->cd();
+
   // Single Event
-  //t->Write("",TObject::kOverwrite);  
+  if(theConfig->item_int["saveTTree"] == true) t->Write("",TObject::kOverwrite);
+    
 
   // Full 3-D Histogram
 

@@ -1,5 +1,5 @@
-#ifndef SENSITIVEDETECTOR_HH_
-#define SENSITIVEDETECTOR_HH_
+#ifndef SENSITIVEDETECTORSCINTILLATOR_HH_
+#define SENSITIVEDETECTORSCINTILLATOR_HH_
 
 
 #include "G4VSensitiveDetector.hh"
@@ -11,12 +11,12 @@
 #include "G4TouchableHistory.hh"
 #include "Analysis.hh"
 class Analysis;
-class SensitiveDetector : public G4VSensitiveDetector
+class SensitiveDetectorScintillator : public G4VSensitiveDetector
 {
 
 public:
-  SensitiveDetector(G4String);
-  virtual ~SensitiveDetector(){};
+  SensitiveDetectorScintillator(G4String);
+  virtual ~SensitiveDetectorScintillator(){};
   G4String theName;
   G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
   void EndOfEvent(G4HCofThisEvent* ){};

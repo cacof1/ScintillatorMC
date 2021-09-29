@@ -19,7 +19,8 @@
 #include "G4LogicalVolume.hh"
 #include "G4Trap.hh"
 #include "G4UnionSolid.hh"
-#include "SensitiveDetector.hh"
+#include "SensitiveDetectorTracker.hh"
+#include "SensitiveDetectorScintillator.hh"
 #include "G4PVPlacement.hh"
 #include "OrganicMaterial.hh"
 #include "G4VPhysicalVolume.hh"
@@ -83,6 +84,7 @@ DetectorConstruction::DetectorConstruction()//G4String theModel,G4double angle,G
     PhantomHalfY     = 30./2.*cm;
     PhantomHalfZ     = 30./2.*cm;
   }
+
   ScintHalfX      = 30./2*cm;
   ScintHalfY      = 30./2*cm;
   ScintHalfZ      = 30./2*cm;
@@ -118,7 +120,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   logicWorld->SetVisAttributes(world_att);
 
   // Tracking Detectors 
-  SensitiveDetector* sd1               = new SensitiveDetector("FrontTracker"); // Front Tracker
+  SensitiveDetectorTracker* sd1        = new SensitiveDetectorTracker("FrontTracker"); // Front Tracker
   G4Box* rad_vol1                      = new G4Box("rad_vol1",1.0*mm,PhantomHalfY,PhantomHalfZ);
   G4LogicalVolume * rad_log1           = new G4LogicalVolume(rad_vol1, theWorldMaterial,"rad_log1",0,0,0);
   G4VisAttributes* sd_att = new G4VisAttributes(G4Colour(0,1,1));
@@ -127,13 +129,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   rad_log1->SetSensitiveDetector(sd1);
   new G4PVPlacement(0,G4ThreeVector(-1*PhantomHalfX - 1*mm+midX ,midY,midZ),"rad_phys1",rad_log1,physWorld,false,0);// 2.0 mm thick so the edge fit with the box edge 
 
-  SensitiveDetector* sd2               = new SensitiveDetector("RearTracker"); // Rear Tracker
+  SensitiveDetectorTracker* sd2        = new SensitiveDetectorTracker("RearTracker"); // Rear Tracker
   G4Box* rad_vol2                      = new G4Box("rad_vol2",1*mm,PhantomHalfY,PhantomHalfZ);
   G4LogicalVolume * rad_log2           = new G4LogicalVolume(rad_vol2, theWorldMaterial,"rad_log2",0,0,0);
   rad_log2->SetVisAttributes(sd_att);
   rad_log2->SetSensitiveDetector(sd2);
   new G4PVPlacement(0,G4ThreeVector(PhantomHalfX + 1*mm + midX ,midY,midZ),"rad_phys2",rad_log2,physWorld,false,0);// 2.0 mm thick so the edge fit with the box edge
-
   
   // Container box which is the mother of all the phantom
   G4Box* cont_vol = new G4Box("cont_vol",PhantomHalfX,PhantomHalfY,PhantomHalfZ);
@@ -144,7 +145,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   cont_log->SetVisAttributes(cont_att);
 
   //Scintillator
-  SensitiveDetector* scintillatorDetector = new SensitiveDetector("Scintillator"); // Rear Tracker
+  SensitiveDetectorScintillator* scintillatorDetector = new SensitiveDetectorScintillator("Scintillator"); 
   G4Material* theScintillatorMaterial     = theMaterial->ConstructMaterial("EJ260",1.023);
   theScintillatorMaterial->GetIonisation()->SetMeanExcitationEnergy(64.7*eV);
   

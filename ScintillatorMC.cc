@@ -1,5 +1,4 @@
 #include "PhysicsList.hh"
-//#include "EmPhysics_pCT.hh"
 #include "PrimaryGeneratorAction.hh"
 #include "Analysis.hh"
 #include "OrganicMaterial.hh"
@@ -95,7 +94,10 @@ int main(int ,char** argv) {
   cfg.addItem("saveYZProj", saveYZProj);
 
   G4int saveZXProj = 0; // []
-  cfg.addItem("saveZXProj", saveZXProj);  
+  cfg.addItem("saveZXProj", saveZXProj);
+
+  G4int saveTTree = 0; // []
+  cfg.addItem("saveTTree", saveTTree);    
 
   G4int particleCount = 0; // []
   cfg.addItem("particleCount", particleCount);  
