@@ -26,23 +26,26 @@
 #include "TFile.h"
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
+#include "Analysis.hh"
 using namespace std;
 
 PrimaryGeneratorAction* PrimaryGeneratorAction::theGenerator = NULL;
 
-PrimaryGeneratorAction::PrimaryGeneratorAction()//G4double energy, G4int ANumber, G4int Nprot, G4int NPencilBeam, G4double sigmaZ, G4double sigmaY):ENER(energy), A(ANumber), Nprotons(Nprot),NPB(NPencilBeam) 
+PrimaryGeneratorAction::PrimaryGeneratorAction()
 { 
   theConfig = pCTconfig::GetInstance();
   NPBY = theConfig->item_int["NPB"];
   NPBZ = theConfig->item_int["NPB"];
 
-  A = theConfig->item_int["ANumber"];
+  A        = theConfig->item_int["ANumber"];
   Nprotons = theConfig->item_int["nProtons"];
   ENER     = theConfig->item_float["Energy"];
   
 
   theGenerator = this;
-  theDetector = DetectorConstruction::GetInstance();
+  theDetector  = DetectorConstruction::GetInstance();
+
+ 
   particleSource  = new G4GeneralParticleSource();
 
   //Generic beam (no phase space)
@@ -114,8 +117,9 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()//G4double energy, G4int ANumber
   
   //Pencil beam parameters
   nProtonsGenerated  = 0;
-  nProtonsToGenerate = Nprotons*NPBY*NPBZ;
-
+  nProtonsPerPencilBeam = 0;
+  idPBGlobal         = 0;// Start at pencil beam 0
+  
   fieldSizeY = theConfig->item_float["fieldSizeY"]; //2*(theDetector->ScintHalfY);//300 mm
   fieldSizeZ = theConfig->item_float["fieldSizeZ"]; //2*(theDetector->ScintHalfZ);//300 mm
   
@@ -127,6 +131,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()//G4double energy, G4int ANumber
     PencilBeamPosY = linspace(-fieldSizeY/2 + theConfig->item_float["centerY"], fieldSizeY/2 + theConfig->item_float["centerY"], NPBY); // mm
     PencilBeamPosZ = linspace(-fieldSizeZ/2 + theConfig->item_float["centerZ"], fieldSizeZ/2 + theConfig->item_float["centerZ"], NPBZ); // mm
   }
+
 }
   
 PrimaryGeneratorAction::~PrimaryGeneratorAction()
@@ -137,9 +142,8 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
-
+  theAnalysis  = Analysis::GetInstance(); // singleton problems, might need to de-singleton it
   //Pencil beam
-  idPBGlobal   = G4UniformRand()*NPBY*NPBZ; //5050
   idPBY        = (idPBGlobal - (idPBGlobal%NPBY))/NPBY;
   idPBZ        = idPBGlobal%NPBY;
   x0           = -1*theDetector->PhantomHalfX - theDetector->midX -1*mm -10*mm;
@@ -153,10 +157,16 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   particleSource->SetCurrentSourceto(1);
   particleSource->GetCurrentSource()->GetPosDist()->SetCentreCoords(G4ThreeVector(x0,y0,z0));
  
-  particleSource->GeneratePrimaryVertex(anEvent);
   Einit = particleSource->GetCurrentSource()->GetParticleEnergy();
-  nProtonsGenerated++;
-  if(nProtonsGenerated%20000==0) cout << nProtonsGenerated << "/"<<nProtonsToGenerate<< endl;
+  nProtonsGenerated++; nProtonsPerPencilBeam++;
+  if(nProtonsGenerated%20000==0) cout << nProtonsGenerated << "/"<< endl;
+  if(nProtonsPerPencilBeam >= theConfig->item_int["nProtons"] )
+    {
+      idPBGlobal +=1;
+      nProtonsPerPencilBeam = 0;
+      theAnalysis->SaveAndReset();      
+    }
+  particleSource->GeneratePrimaryVertex(anEvent);
   
 }
 

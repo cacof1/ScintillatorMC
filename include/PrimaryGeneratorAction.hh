@@ -8,10 +8,10 @@
 #include "TTree.h"
 #include "G4ThreeVector.hh"
 #include <fstream>
+#include "Analysis.hh"
 
-//#define NPBY 50
-//#define NPBZ 50
 using namespace std;
+
 class G4ParticleGun;
 class G4GeneralParticleSource;
 class G4SPSEneDistribution;
@@ -19,6 +19,7 @@ class G4SPSPosDistribution;
 class G4SPSAngDistribution;
 class G4Event;
 class DetectorConstruction;
+class Analysis;
 class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
   public:
@@ -48,7 +49,7 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
   Float_t x,y,z,theta,phi,Einit;
   G4ThreeVector Position;
   G4ThreeVector Momentum;
-  G4int nProtonsGenerated,nProtonsToGenerate;   
+  G4int nProtonsGenerated,nProtonsPerPencilBeam;   
   G4double IrradiatedEnergy; 
   G4ParticleDefinition* particle;
   G4int A;
@@ -72,7 +73,8 @@ private:
   G4GeneralParticleSource*     particleSource;  
   G4ParticleGun*  	       particleGun;  //pointer a to G4 service class
 
-  DetectorConstruction* theDetector;  
+  DetectorConstruction* theDetector;
+  Analysis* theAnalysis;
   G4double Z_Position;
   G4String PSD_Path;
   G4String PSD_Name;

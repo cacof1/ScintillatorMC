@@ -25,7 +25,7 @@ public:
   void PrintAll(){};
 private:
   Analysis* theAnalysis;
-
+  PrimaryGeneratorAction *theGenerator;
 
 };
 

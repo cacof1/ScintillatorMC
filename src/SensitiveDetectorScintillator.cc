@@ -3,7 +3,7 @@
 
 SensitiveDetectorScintillator::SensitiveDetectorScintillator(G4String name):G4VSensitiveDetector(name),theName(name)
 {
-  theAnalysis = Analysis::GetInstance();  
+  theAnalysis  = Analysis::GetInstance();  
 }
 
 G4bool SensitiveDetectorScintillator::ProcessHits(G4Step* aStep, G4TouchableHistory*)

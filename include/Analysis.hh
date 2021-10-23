@@ -33,8 +33,7 @@ public:
   TTree  *t2; // Pencil beam dose and LET
   TFile *f1;
 
-  pCTconfig* theConfig;
-
+  pCTconfig* theConfig = pCTconfig::GetInstance();
   TH3F* Edep_Tot;
   TH3F* L_Tot;  
   TH3F* Entries_Tot;
@@ -47,19 +46,12 @@ public:
   TH2F* XYProj_Tot_Q;
   TH2F* XZProj_Tot_Q;
   TH2F* YZProj_Tot_Q;
-  void Save();
+  void SaveAndClose();
+  void SaveAndReset();  
   void RearFrontDetector(G4Step* aStep, G4String theName);
   void FillScintillatorDose(G4Step*  aStep);
   double findWET(double, double);
-  vector<double>* tracks_X;
-  vector<double>* tracks_Y;
-  vector<double>* tracks_Z;
-  vector<double>* Eloss;
-  vector<double>* Length;
-  vector<double>* tracks_E;
-  vector<double>* Radlen;
-  vector<TString>*  mat_name;
-  vector<TString>*  vol_name;
+
   std::string  proc_name, part_name;
   G4double TotEnergyDeposit = 0.;
 
@@ -102,16 +94,16 @@ private:
   TH2F* ZXProj_Q[theGenerator->NPBY*theGenerator->NPBZ];
   TH2F* YZProj_Q[theGenerator->NPBY*theGenerator->NPBZ];*/
 
-  std::vector<TH1F*> PDD_Q    = vector<TH1F*>();
-  std::vector<TH2F*> YXProj_Q = vector<TH2F*>();
-  std::vector<TH2F*> ZXProj_Q = vector<TH2F*>();
-  std::vector<TH2F*> YZProj_Q = vector<TH2F*>();
-  
+  //TH1F* PDD_Q;
+  TH2F* YXProj_Q;
+  TH2F* ZXProj_Q;
+  TH2F* YZProj_Q;
+
   //Single Event radiograph
   TProfile2D* Front;
   TProfile2D* Back;
 
-  std::vector<  map<int,pair<float,float>> >  Edep_PB = vector< map<int,pair<float,float>> >(); //theGenerator->NPBY*theGenerator->NPBZ];
+  //std::vector<  map<int,pair<float,float>> >  Edep_PB = vector< map<int,pair<float,float>> >(); //theGenerator->NPBY*theGenerator->NPBZ];
   //map<int,pair<float,pair<float,int>>> Edep_PB[theGenerator->NPBY*theGenerator->NPBZ];
 };
 #endif

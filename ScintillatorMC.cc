@@ -116,9 +116,10 @@ int main(int ,char** argv) {
   PrimaryGeneratorAction *theGenerator =  new PrimaryGeneratorAction();
   Analysis* theAnalysis      = new Analysis();
 
+
   runManager->SetUserAction(theGenerator);
-  runManager->SetUserAction( new SteppingAction() );
-  runManager->SetUserInitialization( myDC );
+  //runManager->SetUserAction( new SteppingAction());
+  runManager->SetUserInitialization(myDC);
   runManager->SetVerboseLevel(0);
   runManager->Initialize();
 
@@ -147,8 +148,8 @@ int main(int ,char** argv) {
 
   int NProton_tot = cfg.item_int["NPB"]*cfg.item_int["NPB"]*cfg.item_int["nProtons"];
   runManager->BeamOn(NProton_tot);
-  theAnalysis->Save();
-  //calcRSP(theGenerator);
+  theAnalysis->SaveAndClose();
+  calcRSP(theGenerator);
   //calcStoppingPower(theGenerator, myDC);
   //delete visManager;
   return 0;
