@@ -10,11 +10,11 @@ def errorFunction(x,a,b,c,d):
     return a*scipy.special.erf(b*(x-c))+d
 
 def GetTheEdge(img,rot,xstart,xend,ystart,yend): #Function to compile the slainted edge into the ESF
-    angle      = rot*np.pi/180. 
+    angle      = rot*np.pi/180.
     esf_res    = int(round(1./np.tan(angle)))
     print("Supersampled resolution:", esf_res, "New resolution", esf_res*(xend-xstart))
     print("Angle: ",angle)
-    Xdata_res  = xend - xstart 
+    Xdata_res  = xend - xstart
     ESF      = np.zeros((Xdata_res*esf_res))
     Count    = np.zeros((Xdata_res*esf_res))
     xdata    = np.arange(0,Xdata_res,1)
@@ -24,8 +24,8 @@ def GetTheEdge(img,rot,xstart,xend,ystart,yend): #Function to compile the slaint
         back_shift = int((yend-id_ymin)/esf_res)
         #back_shift = int((yend-id_ymin)*np.tan(angle))
         print(back_shift)
-        for n in range(0, esf_res): 
-            if(n+id_ymin>=yend): break            
+        for n in range(0, esf_res):
+            if(n+id_ymin>=yend): break
             data = img[n+id_ymin, xstart:xend][::-1] #extract data from radiography
             #plt.plot(data)
             for idx,value in enumerate(data): ## Place at the appropriate value
@@ -64,7 +64,7 @@ NPB = 0
 tree = f.Get("Header")
 data = np.zeros((NX,NY))
 for event in tree: NPB = event.NPB
-for i in range(0,NPB):
+for i in range(0,NPB*NPB):
     hist = f.Get("YZProj_Q/YZProj_Q_"+str(i))
     hist = hist2array(hist)
     data +=hist
@@ -82,7 +82,7 @@ print("Image pixels in X/Y:", npixX, npixY)
 pixSize = FOV/npixX
 
 data    = np.fliplr(data)
-xstart,xend, ystart, yend = 20, 80, 65,88
+xstart,xend, ystart, yend = 90, 120, 125,168
 angle = 2.5
 
 print("ROI start [xstart:xend,ystart:yend]",xstart,xend,ystart,yend)
@@ -91,10 +91,10 @@ print("ROI start [xstart:xend,ystart:yend]",xstart,xend,ystart,yend)
 #Draw image
 
 plt.imshow(data,origin='lower', cmap=cm.gray)#, zorder=0, extent=[x[0], x[-1], y[0], y[-1]], vmin=0.1, vmax =2.1) #0.1, 2.1
-plt.plot([xstart,xend],[ystart,ystart],'r--')
-plt.plot([xstart,xend],[yend,yend],'r--')
-plt.plot([xstart,xstart],[ystart,yend],'r--')
-plt.plot([xend,xend],[ystart,yend],'r--')
+#plt.plot([xstart,xend],[ystart,ystart],'r--')
+#plt.plot([xstart,xend],[yend,yend],'r--')
+#plt.plot([xstart,xstart],[ystart,yend],'r--')
+#plt.plot([xend,xend],[ystart,yend],'r--')
 plt.show()
 
 ###############################################################################
@@ -119,4 +119,3 @@ plt.legend()
 plt.show()
 
 print('MTF_10%=',xmtf[np.where(mtf<=0.1)][0],'lp/mm')
-

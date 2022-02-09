@@ -33,48 +33,45 @@ void calcStoppingPower(PrimaryGeneratorAction *, DetectorConstruction*);
 int main(int ,char** argv) {
   gROOT->ProcessLine("#include <vector>");
   const string configFile = G4String(argv[1]);
-  pCTconfig cfg(configFile.data()); // Create a class instance for parsing the configuration file
-  cout<<"Config file "<<configFile<<endl;
+  pCTconfig cfg(configFile.data()); // Create a class instance for parsing the configuration file             
+  cout<<"Config file "<<configFile<<endl; 
 
   G4int nProtons = 1000;
   cfg.addItem("nProtons", nProtons);
 
   G4float Energy = 200; // MeV
-  cfg.addItem("Energy", Energy);
+  cfg.addItem("Energy", Energy);   
 
   G4String Model  = "XCAT";       // []
-  cfg.addItem("Model", Model);
+  cfg.addItem("Model", Model);     
 
   G4String CTPath     = "None";
-  cfg.addItem("CTPath", CTPath);
+  cfg.addItem("CTPath", CTPath);   
 
   G4float Angle  = 0; // Degrees
-  cfg.addItem("Angle", Angle);
-
-  G4String scint_material  = "Water";       // []
-  cfg.addItem("Scintillator", scint_material);
+  cfg.addItem("Angle", Angle);   
 
   G4float Thickness  = 30; // cm
-  cfg.addItem("Thickness", Thickness);
+  cfg.addItem("Thickness", Thickness);   
 
   G4int   thread  = atoi(argv[2]); // []
-  cfg.addItem("thread", thread);
+  cfg.addItem("thread", thread);   
 
   G4int  ANumber  = 1; // Atomic Number
   cfg.addItem("ANumber", ANumber);
-
+  
   G4int NPB       = 100; // []
   cfg.addItem("NPB", NPB);
-
+  
   G4float sigmaX_pos = 5;// mm
   cfg.addItem("sigmaX_pos", sigmaX_pos);
 
   G4float sigmaY_pos = 5; // mm
   cfg.addItem("sigmaY_pos", sigmaY_pos);
-
+    
   G4float sigma_AngX = 25; // mRad
   cfg.addItem("sigma_AngX", sigma_AngX);
-
+  
   G4float sigma_AngY = 25;// mRad
   cfg.addItem("sigma_AngY", sigma_AngY);
 
@@ -82,13 +79,13 @@ int main(int ,char** argv) {
   cfg.addItem("fieldSizeY", fieldSizeY);
 
   G4float centerY = 0;// mm
-  cfg.addItem("centerY", centerY);
+  cfg.addItem("centerY", centerY);  
 
   G4float fieldSizeZ = 300;// mm
-  cfg.addItem("fieldSizeZ", fieldSizeZ);
+  cfg.addItem("fieldSizeZ", fieldSizeZ);      
 
   G4float centerZ = 0;// mm
-  cfg.addItem("centerZ", centerZ);
+  cfg.addItem("centerZ", centerZ);      
 
   G4int saveYXProj = 0; // []
   cfg.addItem("saveYXProj", saveYXProj);
@@ -100,20 +97,20 @@ int main(int ,char** argv) {
   cfg.addItem("saveZXProj", saveZXProj);
 
   G4int saveTTree = 0; // []
-  cfg.addItem("saveTTree", saveTTree);
+  cfg.addItem("saveTTree", saveTTree);    
 
   G4int particleCount = 0; // []
-  cfg.addItem("particleCount", particleCount);
+  cfg.addItem("particleCount", particleCount);  
 
   G4String SourceType  = "Beam";       // []
-  cfg.addItem("SourceType", SourceType);
+  cfg.addItem("SourceType", SourceType);     
 
-
+  
   cfg.Configure();
-  CLHEP::RanecuEngine *theRanGenerator = new CLHEP::RanecuEngine;
+  CLHEP::RanecuEngine *theRanGenerator = new CLHEP::RanecuEngine;  
   theRanGenerator->setSeed(thread);
   CLHEP::HepRandom::setTheEngine(theRanGenerator);
-  G4RunManager* runManager   = new G4RunManager;
+  G4RunManager* runManager   = new G4RunManager;  
   runManager->SetUserInitialization(new PhysicsList());
   DetectorConstruction* myDC = new DetectorConstruction();
   PrimaryGeneratorAction *theGenerator =  new PrimaryGeneratorAction();
@@ -135,7 +132,7 @@ int main(int ,char** argv) {
   //UImanager->ApplyCommand("/run/verbose 1");
   //UImanager->ApplyCommand("/event/verbose 1");
   //UImanager->ApplyCommand("/tracking/verbose 2");
-  //G4UIExecutive * ui = new G4UIExecutive(argc,argv);
+  //G4UIExecutive * ui = new G4UIExecutive(argc,argv);  
 
   #ifdef VIS
   G4UImanager * UImanager = G4UImanager::GetUIpointer();
@@ -164,16 +161,16 @@ void calcRSP(PrimaryGeneratorAction* theGenerator){
   G4EmCalculator* emCal = new G4EmCalculator;
   ofstream myfile;
   myfile.open ("RSP.txt");
-  myfile<<"Density RelativeElectronDensity IValue RSP Name"<<endl;
+  myfile<<"Density RelativeElectronDensity IValue RSP Name"<<endl; 
   G4MaterialTable *theMaterialTable = G4Material::GetMaterialTable();
   G4float waterelectrondensity = 0;
   for(size_t i =0;i<theMaterialTable->size();i++){
-
+      
     G4int I = 0;
     G4float tot =0;
     G4Material* water = theMaterialTable->at(0);
     waterelectrondensity = water->GetElectronDensity()/(g/cm3);
-    for(int j=1500;j<2500;j++){
+    for(int j=1;j<50000;j++){
       G4float dedx_w = emCal->ComputeElectronicDEDX( float(j)/10*MeV,particle,water);
       G4float dedx_b = emCal->ComputeElectronicDEDX( float(j)/10*MeV,particle,theMaterialTable->at(i));
       tot +=dedx_b/dedx_w;
@@ -184,7 +181,7 @@ void calcRSP(PrimaryGeneratorAction* theGenerator){
     myfile<<theMaterialTable->at(i)->GetDensity()/(g/cm3)<<" "<<electrondensity/waterelectrondensity<<" "<<theMaterialTable->at(i)->GetIonisation()->GetMeanExcitationEnergy()/eV<<" "<<RSP<<" "<<theMaterialTable->at(i)->GetName()<<endl;
     }
   myfile.close();
-
+  
 }
 
 void calcStoppingPower(PrimaryGeneratorAction* theGenerator, DetectorConstruction* myDC){
@@ -195,7 +192,7 @@ void calcStoppingPower(PrimaryGeneratorAction* theGenerator, DetectorConstructio
   myfile.open ("Water_Geant4.dat");
   //G4MaterialTable *theMaterialTable = G4Material::GetMaterialTable();
   G4Material* water = myDC->water;//theMaterialTable->at(0);
-
+  
   cout<<emCal->GetCSDARange(105.43*MeV,particle, myDC->water)*mm<<endl;
   for(int j=1;j<50000;j++){
     G4float dedx_w = emCal->ComputeElectronicDEDX( float(j)/10*MeV,particle,water);
@@ -204,3 +201,5 @@ void calcStoppingPower(PrimaryGeneratorAction* theGenerator, DetectorConstructio
   myfile.close();
 
 }
+
+

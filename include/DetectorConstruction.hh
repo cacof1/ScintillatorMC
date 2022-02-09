@@ -21,10 +21,11 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 public:
   DetectorConstruction();//G4String,G4double,G4double,G4String);
   ~DetectorConstruction();
-  virtual G4VPhysicalVolume* Construct();  
+  virtual G4VPhysicalVolume* Construct();
   static inline DetectorConstruction* GetInstance() { return theDetector; }
   G4String thePhantom;
   G4String theCTFileName;
+  G4String theScintillator;
   G4double theThickness;
   OrganicMaterial* theMaterial;
 
@@ -50,8 +51,8 @@ public:
   map<G4int,G4int> hu2id;
   vector<G4int> huList;
   map<G4int,G4double> hu2density;
-  
-  
+
+
 private:
   static DetectorConstruction* theDetector;
 
@@ -59,4 +60,3 @@ private:
 
 
 #endif
-

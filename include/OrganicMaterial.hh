@@ -12,18 +12,19 @@ class OrganicMaterial {
 public :
   OrganicMaterial();
   ~OrganicMaterial();
-  
+
   G4Material* ConstructMaterial(G4String Name,G4double density);
 
   G4Material* ConstructCompositeMaterial(G4String, G4String, G4double,G4double);
   G4double ConvertToMassDensity( std::map<G4Element*, G4double> , G4double);
-  static inline OrganicMaterial* GetInstance() { 
+  static inline OrganicMaterial* GetInstance() {
     if(!theMaterial) theMaterial = new OrganicMaterial();
     return theMaterial; }
 
   G4Material* mat;
   G4Material* water;
-  G4Element* elH, *elC, *elN, *elO, *elF, *elNa, *elMg, *elSi, *elP, *elS, *elCl, *elAr, *elK, *elCa, *elFe, *elZn, *elBa, *elI;
+  G4Material* matB2O3;
+  G4Element* elH, *elC, *elN, *elO, *elF, *elNa, *elMg, *elSi, *elP, *elS, *elCl, *elAr, *elK, *elCa, *elFe, *elZn, *elBa, *elI, *elGd, *elEu, *elW, *elB;
   std::map<G4String,G4Material*> theMaterialList;
 
 private :
@@ -35,4 +36,3 @@ private :
 };
 
 #endif
-

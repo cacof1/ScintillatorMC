@@ -13,9 +13,9 @@
 
 OrganicMaterial* OrganicMaterial::theMaterial=NULL;
 
-OrganicMaterial::OrganicMaterial(){   
+OrganicMaterial::OrganicMaterial(){
 
-  theMaterial = this; 
+  theMaterial = this;
 
   man = G4NistManager::Instance();
   elH  = man->FindOrBuildElement( 1);
@@ -34,10 +34,14 @@ OrganicMaterial::OrganicMaterial(){
   elCa = man->FindOrBuildElement(20);
   elFe = man->FindOrBuildElement(26);
   elZn = man->FindOrBuildElement(30);
-  elI  = man->FindOrBuildElement(53);  
+  elI  = man->FindOrBuildElement(53);
   elBa = man->FindOrBuildElement(56);
+  elGd = man->FindOrBuildElement(64);
+  elW = man->FindOrBuildElement(74);
+  elEu = man->FindOrBuildElement(63);
+  elB = man->FindOrBuildElement(5);
 
-  water = new G4Material("Water",1.0*g/cm3,nel=2,kStateLiquid);   // 1.0*g/cm3                                                                      
+  water = new G4Material("Water",1.0*g/cm3,nel=2,kStateLiquid);   // 1.0*g/cm3
   water->AddElement(elH,11.20*perCent);
   water->AddElement(elO,88.80*perCent);
   water->GetIonisation()->SetMeanExcitationEnergy(75.0*eV);
@@ -46,32 +50,68 @@ OrganicMaterial::OrganicMaterial(){
 OrganicMaterial::~OrganicMaterial(){ theMaterial = NULL; }
 
 G4Material* OrganicMaterial::ConstructMaterial(G4String Name,G4double density)
-{  
-  std::map<G4Element*, G4double> elVector; 
+{
+  std::map<G4Element*, G4double> elVector;
 
-  
 
-  if (Name=="Air" ) {//1.025*mg/cm3 
+
+  if (Name=="Air" ) {//1.025*mg/cm3
 
     elVector.insert(std::pair< G4Element*,G4double> ( elN, 70*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elO, 30*perCent ));
 
   }
 
-  ////  ////  ////  ////  //// 
+  ////  ////  ////  ////  ////
   // https://eljentechnology.com/products/plastic-scintillators/ej-260-ej-262
-  ////  ////  ////  ////  //// 
+  ////  ////  ////  ////  ////
 
-  else if(Name=="EJ260"){ 
+  else if(Name=="EJ260"){ //1.023g/cm3
     elVector.insert(std::pair< G4Element*,G4double> ( elN, 8.5*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elO, 91.5*perCent ));
+    density = 1.023;
   }
 
-  ////  ////  ////  ////  //// 
+  else if(Name=="CARNA"){ //5.890g/cm3
+
+    //elVector.insert(std::pair< G4Element*,G4double> ( elGd,  21.473*perCent ));
+    //elVector.insert(std::pair< G4Element*,G4double> ( elW,  43.177*perCent ));
+    //elVector.insert(std::pair< G4Element*,G4double> ( elEu,  0.864*perCent ));
+    //elVector.insert(std::pair< G4Element*,G4double> ( elB,  6.149*perCent ));
+    //elVector.insert(std::pair< G4Element*,G4double> ( elO,  28.338*perCent ));
+    //density = 5.890;
+
+    G4Material* GD2O3 = new G4Material("GD2O3",7.41*(g/cm3),2);
+    GD2O3->AddElement(elGd,2);
+    GD2O3->AddElement(elO,3);
+
+    G4Material* Eu2O3 = new G4Material("Eu2O3",7.4*(g/cm3),2);
+    Eu2O3->AddElement(elEu,2);
+    Eu2O3->AddElement(elO,3);
+
+    G4Material* WO3 = new G4Material("WO3",7.16*(g/cm3),2);
+    WO3->AddElement(elW,1);
+    WO3->AddElement(elO,3);
+
+    G4Material* B2O3 = new G4Material("B2O3",2.46*(g/cm3),2);
+    B2O3->AddElement(elB,2);
+    B2O3->AddElement(elO,3);
+
+    G4Material* CARNA = new G4Material("CARNA",density*(g/cm3),4,kStateSolid);
+    CARNA->AddMaterial(GD2O3,25.0*0.99*perCent);
+    CARNA->AddMaterial(WO3,55.0*0.99*perCent);
+    CARNA->AddMaterial(Eu2O3,1.0*perCent);
+    CARNA->AddMaterial(B2O3,20.0*0.99*perCent);
+    return CARNA;
+
+
+  }
+
+  ////  ////  ////  ////  ////
   //  Y. Watanabe, “Derivation of linear attenuation coefficients from CT numbers for low-energy photons,” Physics in medicine and biology 4  //  4(9), 2201 (1999).
   ////  ////  ////  ////  ////
 
-  else if(Name=="LN300"){//0.3*g/cm3 
+  else if(Name=="LN300"){//0.3*g/cm3
     elVector.insert(std::pair< G4Element*,G4double> ( elH,  8.33*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elC,  60.32*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elN,  1.67*perCent ));
@@ -118,7 +158,7 @@ G4Material* OrganicMaterial::ConstructMaterial(G4String Name,G4double density)
 
     elVector.insert(std::pair< G4Element*,G4double> ( elH,  11.20*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elO,  88.80*perCent ));
-  } 
+  }
   else if (Name=="CTsolidwater"){//1.015*g/cm3
 
     elVector.insert(std::pair< G4Element*,G4double> ( elH,  8.090*perCent ));
@@ -128,16 +168,16 @@ G4Material* OrganicMaterial::ConstructMaterial(G4String Name,G4double density)
     elVector.insert(std::pair< G4Element*,G4double> ( elCl, 0.130*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elCa, 2.320*perCent ));
 
-  }  
+  }
   else if (Name=="Brain"){//1.045*g/cm3
 
     elVector.insert(std::pair< G4Element*,G4double> ( elH,  10.83*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elC,  72.54*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elN,  1.690*perCent ));
-    elVector.insert(std::pair< G4Element*,G4double> ( elO,  14.86*perCent ));    
+    elVector.insert(std::pair< G4Element*,G4double> ( elO,  14.86*perCent ));
 
   }
-  else if (Name=="Liver"){//1.08*g/cm3 
+  else if (Name=="Liver"){//1.08*g/cm3
 
     /*elVector.insert(std::pair< G4Element*,G4double> ( elH,  11.00*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elC,  4.100*perCent ));
@@ -151,7 +191,7 @@ G4Material* OrganicMaterial::ConstructMaterial(G4String Name,G4double density)
     elVector.insert(std::pair< G4Element*,G4double> ( elCl, 0.140*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elCa, 2.310*perCent ));
 
-  }  
+  }
   else if (Name=="InnerBone"){//1.12*g/cm3
 
     /*elVector.insert(std::pair< G4Element*,G4double> ( elH,  7.900*perCent ));
@@ -208,11 +248,11 @@ G4Material* OrganicMaterial::ConstructMaterial(G4String Name,G4double density)
     elVector.insert(std::pair< G4Element*,G4double> ( elCa, 27.03*perCent ));
   }
 
-  ////  ////  ////  ////  //// 
-  //   1  N. Hünemohr, H. Paganetti, S. Greilich, O. Jäkel, and J. Seco, “Tissue decomposition from dual energy CT data for MC based dose calculation in particle therapy,” 
+  ////  ////  ////  ////  ////
+  //   1  N. Hünemohr, H. Paganetti, S. Greilich, O. Jäkel, and J. Seco, “Tissue decomposition from dual energy CT data for MC based dose calculation in particle therapy,”
   //   Medical Physics 41(6), 061714 (2014).
   ////  ////  ////  ////  ////
-  
+
   else if (Name=="LungInflated"){//0.26*g/cm3
 
     elVector.insert(std::pair< G4Element*,G4double> ( elH,  10.40*perCent ));
@@ -220,7 +260,7 @@ G4Material* OrganicMaterial::ConstructMaterial(G4String Name,G4double density)
     elVector.insert(std::pair< G4Element*,G4double> ( elN,  3.100*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elO,  75.70*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elP,  0.200*perCent ));
-    
+
   }
   else if (Name=="Adipose3"){//0.93*g/cm3
 
@@ -228,7 +268,7 @@ G4Material* OrganicMaterial::ConstructMaterial(G4String Name,G4double density)
     elVector.insert(std::pair< G4Element*,G4double> ( elC,  68.30*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elN,  0.200*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elO,  19.90*perCent ));
-    
+
   }
   else if (Name=="Adipose2"){//0.95*g/cm3
 
@@ -236,7 +276,7 @@ G4Material* OrganicMaterial::ConstructMaterial(G4String Name,G4double density)
     elVector.insert(std::pair< G4Element*,G4double> ( elC,  60.00*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elN,  0.700*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elO,  27.90*perCent ));
-    
+
   }
   else if (Name=="Adipose1"){//0.97*g/cm3
 
@@ -245,7 +285,7 @@ G4Material* OrganicMaterial::ConstructMaterial(G4String Name,G4double density)
     elVector.insert(std::pair< G4Element*,G4double> ( elN,  1.300*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elO,  35.60*perCent ));
 
-  }   
+  }
   else if (Name=="SoftTissue"){//1.03*g/cm3
 
     elVector.insert(std::pair< G4Element*,G4double> ( elH,  10.50*perCent ));
@@ -262,7 +302,7 @@ G4Material* OrganicMaterial::ConstructMaterial(G4String Name,G4double density)
     elVector.insert(std::pair< G4Element*,G4double> ( elN,  3.000*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elO,  75.20*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elP,  0.200*perCent ));
-    
+
   }
   else if (Name=="Liver3"){//1.07*g/cm3
 
@@ -290,7 +330,7 @@ G4Material* OrganicMaterial::ConstructMaterial(G4String Name,G4double density)
     elVector.insert(std::pair< G4Element*,G4double> ( elO,  47.40*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elCa, 12.00*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elP,  5.700*perCent ));
-    
+
   }
   else if (Name=="ConnectiveTissue"){ //1.12*g/cm3
 
@@ -318,8 +358,8 @@ G4Material* OrganicMaterial::ConstructMaterial(G4String Name,G4double density)
     elVector.insert(std::pair< G4Element*,G4double> ( elO,  43.90*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elCa, 13.30*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elP,  6.000*perCent ));
-    
-  }  
+
+  }
   else if (Name=="FemurWholeSpecimen"){//1.43*g/cm3
 
     elVector.insert(std::pair< G4Element*,G4double> ( elH,  6.300*perCent ));
@@ -329,7 +369,7 @@ G4Material* OrganicMaterial::ConstructMaterial(G4String Name,G4double density)
     elVector.insert(std::pair< G4Element*,G4double> ( elCa, 14.50*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elP,  6.600*perCent ));
 
-    
+
   }
   else if (Name=="Ribs10"){//1.52*g/cm3
 
@@ -349,8 +389,8 @@ G4Material* OrganicMaterial::ConstructMaterial(G4String Name,G4double density)
     elVector.insert(std::pair< G4Element*,G4double> ( elO,  43.80*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elCa, 22.60*perCent ));
     elVector.insert(std::pair< G4Element*,G4double> ( elP,  10.40*perCent ));
-    
-  }  
+
+  }
   else if (Name=="FemurCylindricalShaft"){//1.75*g/cm3
 
     elVector.insert(std::pair< G4Element*,G4double> ( elH,  4.200*perCent ));
@@ -362,10 +402,10 @@ G4Material* OrganicMaterial::ConstructMaterial(G4String Name,G4double density)
 
   }
 
-  ////  ////  ////  ////  //// 
+  ////  ////  ////  ////  ////
   //   Loma Linda Collaboration Material
   ////  ////  ////  ////  ////
-  
+
   else if (Name=="SoftTissue_LL"){//1.03*g/cm3
 
     elVector.insert(std::pair< G4Element*,G4double> ( elH,  10.50*perCent ));
@@ -529,7 +569,7 @@ G4Material* OrganicMaterial::ConstructMaterial(G4String Name,G4double density)
   ////  ////  ////  ////  ////
   //   1. Woodard H Q and White D R 1986 The composition of body tissues The British Journal of Radiology 59 1209–18
   //   2. White D R, Woodard H Q and Hammond S M 1987 Average soft-tissue and bone models for use in radiation dosimetry The British Journal of Radiology 60 907–13
-  //   3. International Commission on Radiation Units and Measurements 1992 ICRU Report 46 - Photon, electron, proton, and neutron interaction data for body tissues 
+  //   3. International Commission on Radiation Units and Measurements 1992 ICRU Report 46 - Photon, electron, proton, and neutron interaction data for body tissues
   ////  ////  ////  ////  ////
 
   else if (Name=="brain_white_Woodard_1986"){// 1.04 g/cm3
@@ -1808,11 +1848,12 @@ G4Material* OrganicMaterial::ConstructMaterial(G4String Name,G4double density)
   std::map<G4String,G4Material*>::iterator it;
   it = theMaterialList.find(name);
   if(it != theMaterialList.end() )  return it->second;
-  
+
   // Create and insert the material
   mat = new G4Material(name,massdensity*(g/cm3),nel=elVector.size(),kStateSolid);
   for(auto itr=elVector.begin(); itr!=elVector.end(); itr++) mat->AddElement(itr->first, itr->second);
-  if(Name=="Water") mat->GetIonisation()->SetMeanExcitationEnergy(75.0*eV); 
+  if(Name=="Water") mat->GetIonisation()->SetMeanExcitationEnergy(75.0*eV);
+  if(Name=="EJ260") mat->GetIonisation()->SetMeanExcitationEnergy(64.7*eV);
   theMaterialList.insert(std::pair< G4String,G4Material*> ( name, mat ));
 
   return mat;
@@ -1828,10 +1869,10 @@ G4double OrganicMaterial::ConvertToMassDensity(std::map<G4Element*, G4double> el
     G4double A    = man->GetAtomicMassAmu(Z);
     Ng           += frac*(Z/A);
   }
-  Ng*=Avogadro;   
+  Ng*=Avogadro;
   G4double massdensity = (density*water->GetElectronDensity()*1000)/Ng; // mg to g
   return massdensity;
-}                 
+}
 
 ////////////////////////////////////////////////////////////////////////
 
