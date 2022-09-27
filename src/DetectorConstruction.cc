@@ -48,7 +48,7 @@ DetectorConstruction::DetectorConstruction()//G4String theModel,G4double angle,G
   theDetector   = this;
   thePhantom    = theConfig->item_str["Model"];
   theScintillator    = theConfig->item_str["Scintillator"];
-  theMaterial = OrganicMaterial::GetInstance();
+  theMaterial   = OrganicMaterial::GetInstance();
 
   if(thePhantom=="XCAT"){
     TFile *f  = new TFile(theCTFileName,"update");

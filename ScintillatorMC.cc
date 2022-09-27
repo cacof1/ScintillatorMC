@@ -78,6 +78,12 @@ int main(int ,char** argv) {
   G4float sigma_AngY = 25;// mRad
   cfg.addItem("sigma_AngY", sigma_AngY);
 
+  G4float isoMagnetY = 100; // cm
+  cfg.addItem("isoMagnetY", isoMagnetY);
+
+  G4float isoMagnetZ = 100;// cm
+  cfg.addItem("isoMagnetZ", isoMagnetZ);  
+
   G4float fieldSizeY = 300;// mm
   cfg.addItem("fieldSizeY", fieldSizeY);
 
