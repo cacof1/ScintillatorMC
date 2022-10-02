@@ -125,13 +125,13 @@ int main(int ,char** argv) {
   PrimaryGeneratorAction *theGenerator =  new PrimaryGeneratorAction();
   Analysis* theAnalysis      = new Analysis();
 
-
   runManager->SetUserAction(theGenerator);
   //runManager->SetUserAction( new SteppingAction());
   runManager->SetUserInitialization(myDC);
   runManager->SetVerboseLevel(0);
   runManager->Initialize();
 
+  // get underlying buffer
   //G4UImanager * UImanager = G4UImanager::GetUIpointer();
   //UImanager->ApplyCommand("/run/setCut 1 mm");
   //UImanager->ApplyCommand("/process/inactivate msc all");

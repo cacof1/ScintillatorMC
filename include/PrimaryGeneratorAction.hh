@@ -42,7 +42,7 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 
   pCTconfig* theConfig;
 
-  Float_t x0,y0,z0,px0,py0,pz0;
+  Float_t x0,y0,z0,px0,py0,pz0, angleY, angleZ, px, py, pz;
   Float_t x1,y1,z1,px1,py1,pz1;
   Float_t E0,Estop;
   Int_t   Id;
